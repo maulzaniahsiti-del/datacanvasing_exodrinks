@@ -1,0 +1,2659 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CV. EXODRINKS BALI - Sales Canvasing Dashboard</title>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Chart.js via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+          colors: {
+            exo: {
+              plum: '#3E0B4B',
+              plumDark: '#2A0533',
+              plumSoft: '#F5EEF8',
+              teal: '#0D9488',
+              tealDark: '#0F766E',
+              tealLight: '#CCFBF1',
+              amber: '#F59E0B',
+              amberLight: '#FEF3C7',
+              slate900: '#0F172A',
+              slate50: '#F8FAFC',
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #F8FAFC;
+      color: #0F172A;
+    }
+
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      .print-brand-banner {
+        display: flex !important;
+      }
+      body {
+        background-color: #FFFFFF !important;
+      }
+    }
+
+    /* Custom subtle scrollbar for tables and modals */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F1F5F9;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94A3B8;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+
+  <!-- Toast / Message Box Container (No alert/confirm used anywhere) -->
+  <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full px-4 sm:px-0 pointer-events-none"></div>
+
+  <!-- Top Navigation & Company Identity Header -->
+  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <!-- Brand & Official EXO drinks Logo -->
+        <div class="flex items-start sm:items-center gap-3.5">
+          <!-- Clean Light Badge Container for High Contrast with Deep Plum Logo -->
+          <div class="px-3 py-2 rounded-2xl bg-white border border-purple-900/15 shadow-xs ring-1 ring-purple-900/5 flex items-center justify-center shrink-0">
+            <img
+              src="image_7241d4.png"
+              alt="Logo EXO drinks - The authentic Indonesian drinks"
+              class="h-11 sm:h-12 w-auto object-contain select-none"
+              onerror="this.style.display='none'; document.getElementById('headerLogoFallback').classList.remove('hidden');"
+            />
+            <div id="headerLogoFallback" class="hidden flex items-center gap-1.5 text-[#3E0B4B] font-extrabold text-sm px-1">
+              <span>EXO</span>
+              <span class="font-semibold">drinks</span>
+            </div>
+          </div>
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900">
+                CV. EXODRINKS BALI
+              </h1>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-50 text-[#3E0B4B] border border-purple-200">
+                Sales Canvasing Dashboard
+              </span>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-500 mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+              <span id="activeDateLabel" class="font-medium text-slate-700">Memuat tanggal...</span>
+              <span class="hidden sm:inline text-slate-300">•</span>
+              <span>Regional Bali (Denpasar, Badung, Gianyar, Tabanan &amp; Sekitarnya)</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Primary Action Buttons -->
+        <div class="flex flex-wrap items-center gap-2.5 no-print">
+          <button
+            type="button"
+            onclick="openPlanModal()"
+            class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#3E0B4B] hover:bg-[#2A0533] active:scale-[0.99] text-white text-sm font-semibold shadow-sm transition cursor-pointer"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <span>+ Rencana Kunjungan</span>
+          </button>
+
+          <button
+            type="button"
+            onclick="openCanvasingModal()"
+            class="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 active:scale-[0.99] text-white text-sm font-semibold shadow-sm transition cursor-pointer"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            <span>+ Input Canvasing</span>
+          </button>
+
+          <button
+            type="button"
+            onclick="exportToCSV()"
+            class="inline-flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-white hover:bg-slate-50 active:scale-[0.99] text-slate-700 border border-slate-300 text-sm font-semibold transition cursor-pointer"
+            title="Ekspor data terfilter ke CSV"
+          >
+            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span>Ekspor CSV</span>
+          </button>
+
+          <button
+            type="button"
+            onclick="requestResetDemoData()"
+            class="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-white hover:bg-amber-50 text-amber-700 border border-amber-200 text-xs sm:text-sm font-medium transition cursor-pointer"
+            title="Kembalikan data contoh awal"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span class="hidden md:inline">Reset Contoh</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- Brand Identity Strip / Print & Export Header Banner -->
+    <section aria-label="Identitas Brand EXO drinks" class="bg-white rounded-2xl border border-slate-200/90 px-4 py-3 sm:px-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="px-2.5 py-1.5 rounded-xl bg-purple-50/70 border border-purple-900/10 flex items-center justify-center shrink-0">
+          <img
+            src="image_7241d4.png"
+            alt="EXO drinks Emblem"
+            class="h-8 w-auto object-contain"
+            onerror="this.parentElement.classList.add('hidden')"
+          />
+        </div>
+        <div>
+          <p class="text-xs font-bold text-[#3E0B4B]">The authentic Indonesian drinks</p>
+          <p class="text-[11px] text-slate-500">Monitoring kunjungan canvasing outlet, kafe, warung, dan mitra minuman di seluruh Bali.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 text-[11px] text-slate-600">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-teal-50 text-teal-700 font-semibold border border-teal-200/70">
+          <span class="w-1.5 h-1.5 rounded-full bg-teal-600"></span>
+          CV. EXODRINKS BALI
+        </span>
+      </div>
+    </section>
+
+    <!-- KPI Summary Cards -->
+    <section aria-label="Ringkasan KPI Canvasing" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      <!-- Total Kunjungan -->
+      <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs hover:shadow-md transition">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Total Kunjungan</span>
+          <span class="w-9 h-9 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </span>
+        </div>
+        <div class="mt-3 flex items-baseline gap-2">
+          <p id="kpiTotalVisits" class="text-2xl sm:text-3xl font-extrabold text-slate-900">0</p>
+          <span id="kpiTotalVisitsSub" class="text-xs text-slate-500">log tercatat</span>
+        </div>
+        <p class="mt-2 text-xs text-slate-500">Akumulasi kunjungan lapangan sesuai filter aktif</p>
+      </div>
+
+      <!-- Tingkat Konversi / Closing -->
+      <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs hover:shadow-md transition">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Konversi / Closing</span>
+          <span class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </span>
+        </div>
+        <div class="mt-3 flex items-baseline gap-2">
+          <p id="kpiConversionRate" class="text-2xl sm:text-3xl font-extrabold text-emerald-600">0%</p>
+          <span id="kpiDealCount" class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">0 Deal</span>
+        </div>
+        <p class="mt-2 text-xs text-slate-500">Persentase kunjungan berstatus Deal / Closing</p>
+      </div>
+
+      <!-- Follow-up Aktif -->
+      <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs hover:shadow-md transition">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Follow-up Aktif</span>
+          <span class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </span>
+        </div>
+        <div class="mt-3 flex items-baseline gap-2">
+          <p id="kpiFollowUpCount" class="text-2xl sm:text-3xl font-extrabold text-amber-600">0</p>
+          <span class="text-xs text-slate-500">outlet / prospek</span>
+        </div>
+        <p class="mt-2 text-xs text-slate-500">Tertarik / Follow Up &amp; Minta Katalog / Proposal</p>
+      </div>
+
+      <!-- Estimasi Potensi Order -->
+      <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs hover:shadow-md transition">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-500">Estimasi Potensi Order</span>
+          <span class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </span>
+        </div>
+        <div class="mt-3">
+          <p id="kpiEstimatedValue" class="text-xl sm:text-2xl font-extrabold text-slate-900 truncate">Rp 0</p>
+        </div>
+        <p class="mt-2 text-xs text-slate-500">Total nilai estimasi order &amp; transaksi prospek</p>
+      </div>
+
+      <!-- Pipeline Big Order (>= Rp 5.000.000 atau ditandai Big Order) -->
+      <div class="bg-white rounded-2xl border border-purple-200/90 p-5 shadow-xs hover:shadow-md transition ring-1 ring-purple-900/5">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-semibold uppercase tracking-wider text-[#3E0B4B]">Pipeline Big Order</span>
+          <span class="w-9 h-9 rounded-xl bg-purple-100 text-[#3E0B4B] flex items-center justify-center font-extrabold text-xs">
+            BIG
+          </span>
+        </div>
+        <div class="mt-3 flex items-baseline gap-2">
+          <p id="kpiBigOrderValue" class="text-xl sm:text-2xl font-extrabold text-[#3E0B4B] truncate">Rp 0</p>
+          <span id="kpiBigOrderCountBadge" class="text-xs font-bold px-2 py-0.5 rounded-full bg-purple-100 text-[#3E0B4B] shrink-0">0 Akun</span>
+        </div>
+        <p class="mt-2 text-xs text-slate-500">Akun skala besar / nilai order &ge; Rp 5.000.000</p>
+      </div>
+    </section>
+
+    <!-- Modul Rencana Kunjungan (Visit Schedule / Itinerary per Tanggal & Jam) -->
+    <section id="visitScheduleSection" aria-label="Rencana Kunjungan per Tanggal dan Jam" class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-200 bg-gradient-to-r from-purple-50/70 via-white to-teal-50/50 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <h2 class="text-base sm:text-lg font-extrabold text-slate-900">Rencana Kunjungan (Itinerary Tanggal &amp; Jam)</h2>
+            <span id="kpiScheduledCountBadge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-[#3E0B4B]">0 Terjadwal</span>
+            <span id="kpiTodayPlanCountBadge" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-teal-100 text-teal-800">0 Hari Ini</span>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Jadwal kunjungan lapangan per tanggal, rentang jam (WITA), lokasi spesifik di Bali, serta konversi cepat ke Log Hasil Canvasing.
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2 no-print">
+          <button
+            type="button"
+            onclick="filterTodayPlans()"
+            class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-purple-50 text-[#3E0B4B] border border-purple-200 text-xs font-semibold transition cursor-pointer"
+          >
+            <span>Jadwal Hari Ini</span>
+          </button>
+          <button
+            type="button"
+            onclick="resetPlanFilters()"
+            class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-600 border border-slate-200 text-xs font-semibold transition cursor-pointer"
+          >
+            <span>Reset Jadwal</span>
+          </button>
+          <button
+            type="button"
+            onclick="openPlanModal()"
+            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#3E0B4B] hover:bg-[#2A0533] text-white text-xs font-semibold shadow-xs transition cursor-pointer"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            <span>Tambah Rencana</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Filter Rencana Kunjungan (Tanggal, Sesi Jam/Waktu, Wilayah Bali, Status Rencana) -->
+      <div class="p-4 sm:p-5 border-b border-slate-100 bg-slate-50/60 no-print">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+          <div>
+            <label for="planFilterDate" class="block text-xs font-semibold text-slate-600 mb-1">Tanggal Rencana</label>
+            <input
+              type="date"
+              id="planFilterDate"
+              onchange="applyPlanFilters()"
+              class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 bg-white focus:border-[#3E0B4B] focus:ring-2 focus:ring-[#3E0B4B]/15 outline-none transition"
+            />
+          </div>
+
+          <div>
+            <label for="planFilterTimeSlot" class="block text-xs font-semibold text-slate-600 mb-1">Rentang Jam / Waktu</label>
+            <select
+              id="planFilterTimeSlot"
+              onchange="applyPlanFilters()"
+              class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 bg-white focus:border-[#3E0B4B] focus:ring-2 focus:ring-[#3E0B4B]/15 outline-none transition"
+            >
+              <option value="ALL">Semua Jam (00:00 - 23:59)</option>
+              <option value="MORNING">Pagi (06:00 - 11:59 WITA)</option>
+              <option value="AFTERNOON">Siang - Sore (12:00 - 17:59 WITA)</option>
+              <option value="EVENING">Malam (18:00 - 23:59 WITA)</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="planFilterArea" class="block text-xs font-semibold text-slate-600 mb-1">Wilayah / Area Bali</label>
+            <select
+              id="planFilterArea"
+              onchange="applyPlanFilters()"
+              class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 bg-white focus:border-[#3E0B4B] focus:ring-2 focus:ring-[#3E0B4B]/15 outline-none transition"
+            >
+              <option value="ALL">Semua Wilayah</option>
+              <option value="Denpasar">Denpasar</option>
+              <option value="Badung (Kuta/Seminyak/Canggu)">Badung (Kuta/Seminyak/Canggu)</option>
+              <option value="Badung (Jimbaran/Nusa Dua/Uluwatu)">Badung (Jimbaran/Nusa Dua/Uluwatu)</option>
+              <option value="Gianyar (Ubud/Sukawati)">Gianyar (Ubud/Sukawati)</option>
+              <option value="Tabanan">Tabanan</option>
+              <option value="Mengwi / Dalung">Mengwi / Dalung</option>
+              <option value="Sanur">Sanur</option>
+              <option value="Lainnya (Bali)">Lainnya (Bali)</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="planFilterStatus" class="block text-xs font-semibold text-slate-600 mb-1">Status Rencana</label>
+            <select
+              id="planFilterStatus"
+              onchange="applyPlanFilters()"
+              class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 bg-white focus:border-[#3E0B4B] focus:ring-2 focus:ring-[#3E0B4B]/15 outline-none transition"
+            >
+              <option value="ALL">Semua Status</option>
+              <option value="Terjadwal">Terjadwal</option>
+              <option value="Reschedule">Reschedule</option>
+              <option value="Selesai">Selesai</option>
+              <option value="Dibatalkan">Dibatalkan</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="planSearchInput" class="block text-xs font-semibold text-slate-600 mb-1">Cari Lokasi / PIC</label>
+            <input
+              type="text"
+              id="planSearchInput"
+              oninput="applyPlanFilters()"
+              placeholder="Nama lokasi, jalan, PIC..."
+              class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 bg-white focus:border-[#3E0B4B] focus:ring-2 focus:ring-[#3E0B4B]/15 outline-none transition"
+            />
+          </div>
+        </div>
+        <div class="mt-3 flex items-center justify-between text-xs text-slate-600">
+          <span id="planResultCountLabel" class="font-semibold text-slate-700">Menampilkan 0 rencana kunjungan</span>
+          <span class="hidden sm:inline text-slate-500">Diurutkan otomatis per tanggal &amp; jam kunjungan</span>
+        </div>
+      </div>
+
+      <!-- Timeline Rencana Kunjungan per Tanggal & Jam -->
+      <div id="visitScheduleTimeline" class="p-4 sm:p-5 space-y-6">
+        <!-- Dirender dinamis lewat JavaScript -->
+      </div>
+
+      <!-- Empty State Rencana Kunjungan -->
+      <div id="planEmptyStateBox" class="hidden py-12 px-6 text-center">
+        <div class="w-12 h-12 rounded-2xl bg-purple-50 text-[#3E0B4B] flex items-center justify-center mx-auto mb-3">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <h3 class="text-sm font-bold text-slate-800">Belum ada rencana kunjungan sesuai filter</h3>
+        <p class="text-xs text-slate-500 mt-1 max-w-md mx-auto">
+          Tambahkan jadwal rencana kunjungan per tanggal dan jam beserta lokasi spesifik di Bali, atau reset filter jadwal.
+        </p>
+        <div class="mt-4 flex items-center justify-center gap-2">
+          <button type="button" onclick="resetPlanFilters()" class="px-3.5 py-2 rounded-xl border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer">
+            Reset Jadwal
+          </button>
+          <button type="button" onclick="openPlanModal()" class="px-3.5 py-2 rounded-xl bg-[#3E0B4B] text-white text-xs font-semibold hover:bg-[#2A0533] cursor-pointer">
+            + Tambah Rencana
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Filter & Search Bar (Log Hasil Canvasing) -->
+    <section aria-label="Filter dan Pencarian Data" class="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+        <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+          <svg class="w-4 h-4 text-teal-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+          </svg>
+          <span>Filter &amp; Pencarian Log Canvasing</span>
+        </h2>
+        <button
+          type="button"
+          onclick="resetFilters()"
+          class="text-xs font-semibold text-teal-600 hover:text-teal-700 self-start sm:self-auto cursor-pointer"
+        >
+          Reset Semua Filter
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        <!-- Pencarian Bebas -->
+        <div class="lg:col-span-2">
+          <label for="searchInput" class="block text-xs font-medium text-slate-600 mb-1">Cari Outlet, PIC, atau Catatan</label>
+          <div class="relative">
+            <input
+              type="text"
+              id="searchInput"
+              oninput="applyFilters()"
+              placeholder="Ketik nama outlet, PIC, no. WA, catatan..."
+              class="w-full pl-9 pr-3 py-2 text-sm rounded-xl border border-slate-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none transition"
+            />
+            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Filter Wilayah Bali -->
+        <div>
+          <label for="filterArea" class="block text-xs font-medium text-slate-600 mb-1">Wilayah / Area Bali</label>
+          <select
+            id="filterArea"
+            onchange="applyFilters()"
+            class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 bg-white focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none transition"
+          >
+            <option value="ALL">Semua Wilayah</option>
+            <option value="Denpasar">Denpasar</option>
+            <option value="Badung (Kuta/Seminyak/Canggu)">Badung (Kuta/Seminyak/Canggu)</option>
+            <option value="Badung (Jimbaran/Nusa Dua/Uluwatu)">Badung (Jimbaran/Nusa Dua/Uluwatu)</option>
+            <option value="Gianyar (Ubud/Sukawati)">Gianyar (Ubud/Sukawati)</option>
+            <option value="Tabanan">Tabanan</option>
+            <option value="Mengwi / Dalung">Mengwi / Dalung</option>
+            <option value="Sanur">Sanur</option>
+            <option value="Lainnya (Bali)">Lainnya (Bali)</option>
+          </select>
+        </div>
+
+        <!-- Filter Hasil Kunjungan -->
+        <div>
+          <label for="filterOutcome" class="block text-xs font-medium text-slate-600 mb-1">Hasil Kunjungan</label>
+          <select
+            id="filterOutcome"
+            onchange="applyFilters()"
+            class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 bg-white focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none transition"
+          >
+            <option value="ALL">Semua Hasil</option>
+            <option value="Deal / Closing">Deal / Closing</option>
+            <option value="Tertarik / Follow Up">Tertarik / Follow Up</option>
+            <option value="Minta Katalog / Proposal">Minta Katalog / Proposal</option>
+            <option value="Penolakan / Belum Cocok">Penolakan / Belum Cocok</option>
+          </select>
+        </div>
+
+        <!-- Filter Rentang Tanggal -->
+        <div>
+          <label for="filterDateFrom" class="block text-xs font-medium text-slate-600 mb-1">Dari Tanggal</label>
+          <input
+            type="date"
+            id="filterDateFrom"
+            onchange="applyFilters()"
+            class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 bg-white focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none transition"
+          />
+        </div>
+      </div>
+
+      <!-- Baris tanggal sampai -->
+      <div class="mt-3 pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-2 text-xs text-slate-600">
+          <label for="filterDateTo" class="font-medium">Sampai Tanggal:</label>
+          <input
+            type="date"
+            id="filterDateTo"
+            onchange="applyFilters()"
+            class="px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 bg-white focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none"
+          />
+          <span id="resultCountLabel" class="ml-1 font-semibold text-slate-700">Menampilkan 0 data</span>
+        </div>
+
+        <!-- Quick Status Chips -->
+        <div class="flex flex-wrap items-center gap-1.5">
+          <button type="button" onclick="quickStatusFilter('ALL')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 transition cursor-pointer">Semua</button>
+          <button type="button" onclick="quickBigOrderFilter()" class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-purple-100 hover:bg-purple-200 text-[#3E0B4B] border border-purple-200 transition cursor-pointer">Big Order Only</button>
+          <button type="button" onclick="quickStatusFilter('Deal / Closing')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-50 hover:bg-emerald-100 text-emerald-700 transition cursor-pointer">Deal</button>
+          <button type="button" onclick="quickStatusFilter('Tertarik / Follow Up')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-amber-50 hover:bg-amber-100 text-amber-700 transition cursor-pointer">Follow Up</button>
+          <button type="button" onclick="quickStatusFilter('Minta Katalog / Proposal')" class="px-2.5 py-1 rounded-lg text-xs font-medium bg-sky-50 hover:bg-sky-100 text-sky-700 transition cursor-pointer">Katalog</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Visualisasi Ringkas (Distribusi Hasil & Performa Wilayah) -->
+    <section aria-label="Visualisasi Performa Canvasing" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Chart 1: Distribusi Hasil Kunjungan -->
+      <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">Distribusi Hasil Kunjungan</h3>
+            <p class="text-xs text-slate-500">Proporsi status hasil dari log canvasing terfilter</p>
+          </div>
+          <span class="text-xs font-semibold text-teal-700 bg-teal-50 px-2.5 py-1 rounded-full">Real-time</span>
+        </div>
+        <div class="h-60 relative">
+          <canvas id="outcomeChartCanvas"></canvas>
+        </div>
+      </div>
+
+      <!-- Chart 2: Performa Kunjungan & Potensi per Wilayah Bali -->
+      <div class="bg-white rounded-2xl border border-slate-200/90 p-5 shadow-xs">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">Kunjungan per Wilayah / Area Bali</h3>
+            <p class="text-xs text-slate-500">Sebaran jumlah kunjungan di tiap zona operasional</p>
+          </div>
+          <span class="text-xs font-semibold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full">Regional Bali</span>
+        </div>
+        <div class="h-60 relative">
+          <canvas id="areaChartCanvas"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tabel & Log Aktivitas Canvasing Lengkap -->
+    <section aria-label="Tabel Log Aktivitas Canvasing" class="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 class="text-base font-bold text-slate-900">Log Aktivitas Sales Canvasing</h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Catatan lengkap waktu kunjungan, lokasi/outlet, PIC yang ditemui, nomor kontak/WA, hasil, dan rencana tindak lanjut.
+          </p>
+        </div>
+        <button
+          type="button"
+          onclick="openCanvasingModal()"
+          class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-700 text-xs font-semibold transition cursor-pointer self-start sm:self-auto"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+          </svg>
+          <span>Tambah Kunjungan</span>
+        </button>
+      </div>
+
+      <!-- Responsive Table Wrapper -->
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-slate-200 text-left">
+          <thead class="bg-slate-50 text-slate-600 text-xs font-bold uppercase tracking-wider">
+            <tr>
+              <th scope="col" class="px-4 py-3.5 whitespace-nowrap">Tanggal &amp; Jam</th>
+              <th scope="col" class="px-4 py-3.5">Tujuan / Outlet &amp; Wilayah</th>
+              <th scope="col" class="px-4 py-3.5">PIC Ditemui &amp; Jabatan</th>
+              <th scope="col" class="px-4 py-3.5">Kontak / WhatsApp</th>
+              <th scope="col" class="px-4 py-3.5 whitespace-nowrap">Hasil Kunjungan</th>
+              <th scope="col" class="px-4 py-3.5">Catatan &amp; Next Action</th>
+              <th scope="col" class="px-4 py-3.5 text-right whitespace-nowrap">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="canvasingTableBody" class="divide-y divide-slate-100 text-sm text-slate-700 bg-white">
+            <!-- Baris data dirender lewat JavaScript -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyStateBox" class="hidden py-14 px-6 text-center">
+        <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        </div>
+        <h3 class="text-sm font-bold text-slate-800">Tidak ada data canvasing yang cocok</h3>
+        <p class="text-xs text-slate-500 mt-1 max-w-md mx-auto">
+          Coba ubah kata kunci pencarian, sesuaikan filter wilayah/hasil/tanggal, atau tambahkan log kunjungan baru.
+        </p>
+        <div class="mt-4 flex items-center justify-center gap-2">
+          <button type="button" onclick="resetFilters()" class="px-3.5 py-2 rounded-xl border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer">
+            Reset Filter
+          </button>
+          <button type="button" onclick="openCanvasingModal()" class="px-3.5 py-2 rounded-xl bg-teal-600 text-white text-xs font-semibold hover:bg-teal-700 cursor-pointer">
+            + Input Canvasing
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 mt-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+      <div class="flex items-center gap-2.5">
+        <span class="px-2 py-1 rounded-lg bg-purple-50/80 border border-purple-900/10 inline-flex items-center">
+          <img
+            src="image_7241d4.png"
+            alt="Logo EXO drinks"
+            class="h-6 w-auto object-contain"
+            onerror="this.parentElement.classList.add('hidden')"
+          />
+        </span>
+        <p><span class="font-semibold text-slate-700">CV. EXODRINKS BALI</span> • Sistem Pencatatan &amp; Monitoring Sales Canvasing Lapangan</p>
+      </div>
+      <p>Data tersimpan otomatis di browser (LocalStorage) • Mendukung ekspor CSV</p>
+    </div>
+  </footer>
+
+  <!-- Modal Form Input / Edit Canvasing -->
+  <div id="canvasingModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modalTitle" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+      <!-- Backdrop -->
+      <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity" onclick="closeCanvasingModal()"></div>
+
+      <!-- Modal Panel -->
+      <div class="relative inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl w-full border border-slate-200 z-10">
+        <div class="bg-gradient-to-r from-teal-600 to-emerald-600 px-6 py-4 text-white flex items-center justify-between">
+          <div>
+            <h3 id="modalTitle" class="text-base sm:text-lg font-bold">Input Log Kunjungan Canvasing</h3>
+            <p class="text-xs text-teal-50 mt-0.5">Isi detail kunjungan lapangan CV. EXODRINKS BALI secara lengkap</p>
+          </div>
+          <button type="button" onclick="closeCanvasingModal()" class="p-1.5 rounded-lg hover:bg-white/15 text-white transition cursor-pointer" aria-label="Tutup modal">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <form id="canvasingForm" onsubmit="handleFormSubmit(event)" class="p-5 sm:p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+          <input type="hidden" id="editRecordId" />
+
+          <!-- Tanggal & Jam -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="visitDate" class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Kunjungan <span class="text-rose-500">*</span></label>
+              <input type="date" id="visitDate" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none" />
+            </div>
+            <div>
+              <label for="visitTime" class="block text-xs font-semibold text-slate-700 mb-1">Jam Kunjungan (WITA) <span class="text-rose-500">*</span></label>
+              <input type="time" id="visitTime" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none" />
+            </div>
+          </div>
+
+          <!-- Nama Outlet / Lokasi & Kategori -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="outletName" class="block text-xs font-semibold text-slate-700 mb-1">Tujuan Kunjungan / Nama Outlet atau Lokasi <span class="text-rose-500">*</span></label>
+              <input type="text" id="outletName" required placeholder="Contoh: Warung Kopi & Es Segar Canggu" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none" />
+            </div>
+            <div>
+              <label for="outletCategory" class="block text-xs font-semibold text-slate-700 mb-1">Kategori Tempat</label>
+              <select id="outletCategory" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 bg-white focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none">
+                <option value="Kafe / Kedai Minuman">Kafe / Kedai Minuman</option>
+                <option value="Warung / Rumah Makan">Warung / Rumah Makan</option>
+                <option value="Toko / Minimarket / Grosir">Toko / Minimarket / Grosir</option>
+                <option value="Sekolah / Kampus">Sekolah / Kampus</option>
+                <option value="Kantor / Instansi">Kantor / Instansi</option>
+                <option value="Event / Bazar / Beach Club">Event / Bazar / Beach Club</option>
+                <option value="Lainnya">Lainnya</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Wilayah Bali & Alamat Singkat -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="visitArea" class="block text-xs font-semibold text-slate-700 mb-1">Wilayah / Area Bali <span class="text-rose-500">*</span></label>
+              <select id="visitArea" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 bg-white focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none">
+                <option value="Denpasar">Denpasar</option>
+                <option value="Badung (Kuta/Seminyak/Canggu)">Badung (Kuta/Seminyak/Canggu)</option>
+                <option value="Badung (Jimbaran/Nusa Dua/Uluwatu)">Badung (Jimbaran/Nusa Dua/Uluwatu)</option>
+                <option value="Gianyar (Ubud/Sukawati)">Gianyar (Ubud/Sukawati)</option>
+                <option value="Tabanan">Tabanan</option>
+                <option value="Mengwi / Dalung">Mengwi / Dalung</option>
+                <option value="Sanur">Sanur</option>
+                <option value="Lainnya (Bali)">Lainnya (Bali)</option>
+              </select>
+            </div>
+            <div>
+              <label for="outletAddress" class="block text-xs font-semibold text-slate-700 mb-1">Alamat / Patokan Singkat</label>
+              <input type="text" id="outletAddress" placeholder="Contoh: Jl. Pantai Berawa No. 45" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none" />
+            </div>
+          </div>
+
+          <!-- PIC yang Ditemui & Jabatan -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="picName" class="block text-xs font-semibold text-slate-700 mb-1">Nama PIC / Orang yang Ditemui <span class="text-rose-500">*</span></label>
+              <input type="text" id="picName" required placeholder="Contoh: Bli Wayan Sudarma" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none" />
+            </div>
+            <div>
+              <label for="picRole" class="block text-xs font-semibold text-slate-700 mb-1">Jabatan / Peran PIC</label>
+              <input type="text" id="picRole" placeholder="Contoh: Owner / Manager / Kepala Kantin" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none" />
+            </div>
+          </div>
+
+          <!-- Nomor Kontak / WhatsApp & Hasil Kunjungan -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="contactPhone" class="block text-xs font-semibold text-slate-700 mb-1">Nomor Kontak / WhatsApp <span class="text-rose-500">*</span></label>
+              <input type="tel" id="contactPhone" required placeholder="Contoh: 081234567890" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none" />
+            </div>
+            <div>
+              <label for="visitOutcome" class="block text-xs font-semibold text-slate-700 mb-1">Hasil Kunjungan <span class="text-rose-500">*</span></label>
+              <select id="visitOutcome" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 bg-white focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none">
+                <option value="Deal / Closing">Deal / Closing</option>
+                <option value="Tertarik / Follow Up">Tertarik / Follow Up</option>
+                <option value="Minta Katalog / Proposal">Minta Katalog / Proposal</option>
+                <option value="Penolakan / Belum Cocok">Penolakan / Belum Cocok</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Estimasi Nilai Order (IDR) -->
+          <div>
+            <label for="estimatedOrder" class="block text-xs font-semibold text-slate-700 mb-1">Estimasi Nilai Order / Transaksi (Rp)</label>
+            <input type="number" id="estimatedOrder" min="0" step="50000" placeholder="Contoh: 7500000" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none" />
+            <p class="text-[11px] text-slate-500 mt-1">Masukkan angka rupiah tanpa titik/koma, misalnya 7500000 untuk Rp 7.500.000. Nilai &ge; Rp 5.000.000 otomatis terdeteksi sebagai Big Order.</p>
+          </div>
+
+          <!-- Parameter Khusus Big Order (Skala Akun, Tahap Negosiasi & Syarat Order/TOP) -->
+          <div class="rounded-2xl border border-purple-200/90 bg-purple-50/40 p-4 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="text-xs font-bold text-[#3E0B4B]">Detail Target Big Order &amp; Negosiasi B2B</span>
+              <label class="inline-flex items-center gap-2 text-xs font-bold text-[#3E0B4B] cursor-pointer">
+                <input type="checkbox" id="isBigOrderTarget" class="w-4 h-4 rounded border-purple-300 text-[#3E0B4B] focus:ring-[#3E0B4B]" />
+                <span>Tandai sebagai Target Big Order</span>
+              </label>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label for="accountTier" class="block text-xs font-semibold text-slate-700 mb-1">Skala Akun / Volume</label>
+                <select id="accountTier" class="w-full px-2.5 py-2 text-xs rounded-xl border border-slate-300 bg-white focus:border-[#3E0B4B] outline-none">
+                  <option value="Big Order / Distributor / Hotel / Group">Big Order / Distributor / Hotel / Group</option>
+                  <option value="Multi-Outlet / Retail Chain">Multi-Outlet / Retail Chain</option>
+                  <option value="Event / Bulk Order">Event / Bulk Order</option>
+                  <option value="Regular Outlet">Regular Outlet</option>
+                </select>
+              </div>
+              <div>
+                <label for="negotiationStage" class="block text-xs font-semibold text-slate-700 mb-1">Tahap Negosiasi</label>
+                <select id="negotiationStage" class="w-full px-2.5 py-2 text-xs rounded-xl border border-slate-300 bg-white focus:border-[#3E0B4B] outline-none">
+                  <option value="Prospek &amp; Pemetaan Kebutuhan">Prospek &amp; Pemetaan Kebutuhan</option>
+                  <option value="Presentasi &amp; Sampel/Tester">Presentasi &amp; Sampel/Tester</option>
+                  <option value="Penawaran Harga &amp; MOQ">Penawaran Harga &amp; MOQ</option>
+                  <option value="Negosiasi Kontrak / TOP">Negosiasi Kontrak / TOP</option>
+                  <option value="PO Terbit / Closing">PO Terbit / Closing</option>
+                </select>
+              </div>
+              <div>
+                <label for="orderTerms" class="block text-xs font-semibold text-slate-700 mb-1">Target MOQ / TOP / Jadwal Kirim</label>
+                <input type="text" id="orderTerms" placeholder="Contoh: MOQ 500 unit, TOP 14 hari" class="w-full px-2.5 py-2 text-xs rounded-xl border border-slate-300 bg-white focus:border-[#3E0B4B] outline-none" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Catatan Hasil & Rencana Tindak Lanjut -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="visitNotes" class="block text-xs font-semibold text-slate-700 mb-1">Catatan Hasil Kunjungan</label>
+              <textarea id="visitNotes" rows="3" placeholder="Ringkasan diskusi, varian minuman yang diminati, respons PIC..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none"></textarea>
+            </div>
+            <div>
+              <label for="nextAction" class="block text-xs font-semibold text-slate-700 mb-1">Rencana Tindak Lanjut (Next Action)</label>
+              <textarea id="nextAction" rows="3" placeholder="Contoh: Kirim sampel & price list via WA Jumat pagi, jadwal kirim perdana..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none"></textarea>
+            </div>
+          </div>
+
+          <!-- Form Unggah Foto / File Saat Kunjungan atau Saat Selesai + Keterangan -->
+          <div class="rounded-2xl border border-teal-200/80 bg-teal-50/40 p-4 space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <label for="visitAttachmentInput" class="block text-xs font-bold text-slate-800">
+                  Foto / File Bukti Kunjungan atau Saat Selesai &amp; Keterangannya
+                </label>
+                <p class="text-[11px] text-slate-500 mt-0.5">
+                  Unggah foto outlet/display/tester atau dokumen/file pendukung (JPG, PNG, WEBP, PDF, DOC/XLS, maks. 1,5 MB per file).
+                </p>
+              </div>
+              <label
+                for="visitAttachmentInput"
+                class="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-teal-50 text-teal-800 border border-teal-300 text-xs font-semibold shadow-2xs transition cursor-pointer shrink-0"
+              >
+                <svg class="w-4 h-4 text-teal-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span>Pilih Foto / File</span>
+              </label>
+              <input
+                type="file"
+                id="visitAttachmentInput"
+                multiple
+                accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.csv,.txt"
+                onchange="handleAttachmentFilesSelected(event)"
+                class="sr-only"
+              />
+            </div>
+
+            <!-- Daftar Foto / File Terpilih & Input Keterangan Masing-Masing -->
+            <div id="attachmentDraftList" class="space-y-2.5">
+              <!-- Diisi dinamis saat file dipilih atau saat edit log -->
+            </div>
+            <p id="attachmentDraftEmptyText" class="text-[11px] text-slate-400 italic">
+              Belum ada foto atau file dilampirkan untuk kunjungan ini.
+            </p>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="pt-3 border-t border-slate-200 flex items-center justify-end gap-2.5">
+            <button type="button" onclick="closeCanvasingModal()" class="px-4 py-2 rounded-xl border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer">
+              Batal
+            </button>
+            <button type="submit" class="px-5 py-2 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-sm font-semibold shadow-sm transition cursor-pointer">
+              Simpan Log Canvasing
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Form Input / Edit Rencana Kunjungan -->
+  <div id="planModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="planModalTitle" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+      <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity" onclick="closePlanModal()"></div>
+
+      <div class="relative inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl w-full border border-slate-200 z-10">
+        <div class="bg-gradient-to-r from-[#3E0B4B] to-purple-800 px-6 py-4 text-white flex items-center justify-between">
+          <div>
+            <h3 id="planModalTitle" class="text-base sm:text-lg font-bold">Tambah Rencana Kunjungan (Itinerary)</h3>
+            <p class="text-xs text-purple-100 mt-0.5">Atur tanggal, jam mulai/selesai, lokasi spesifik di Bali, dan target PIC</p>
+          </div>
+          <button type="button" onclick="closePlanModal()" class="p-1.5 rounded-lg hover:bg-white/15 text-white transition cursor-pointer" aria-label="Tutup modal rencana">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <form id="planForm" onsubmit="handlePlanFormSubmit(event)" class="p-5 sm:p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+          <input type="hidden" id="editPlanId" />
+          <input type="hidden" id="sourcePlanIdForConversion" />
+
+          <!-- Tanggal & Rentang Jam -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label for="planDate" class="block text-xs font-semibold text-slate-700 mb-1">Tanggal Kunjungan <span class="text-rose-500">*</span></label>
+              <input type="date" id="planDate" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:border-[#3E0B4B] focus:ring-2 focus:ring-[#3E0B4B]/20 outline-none" />
+            </div>
+            <div>
+              <label for="planStartTime" class="block text-xs font-semibold text-slate-700 mb-1">Jam Mulai (WITA) <span class="text-rose-500">*</span></label>
+              <input type="time" id="planStartTime" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:border-[#3E0B4B] focus:ring-2 focus:ring-[#3E0B4B]/20 outline-none" />
+            </div>
+            <div>
+              <label for="planEndTime" class="block text-xs font-semibold text-slate-700 mb-1">Jam Selesai (WITA)</label>
+              <input type="time" id="planEndTime" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:border-[#3E0B4B] focus:ring-2 focus:ring-[#3E0B4B]/20 outline-none" />
+            </div>
+          </div>
+
+          <!-- Nama Lokasi & Kategori -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="planLocationName" class="block text-xs font-semibold text-slate-700 mb-1">Nama Outlet / Lokasi Tujuan <span class="text-rose-500">*</span></label>
+              <input type="text" id="planLocationName" required placeholder="Contoh: Kedai Kopi & Es Segar Kerobokan" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:border-[#3E0B4B] focus:ring-2 focus:ring-[#3E0B4B]/20 outline-none" />
+            </div>
+            <div>
+              <label for="planCategory" class="block text-xs font-semibold text-slate-700 mb-1">Kategori Tempat</label>
+              <select id="planCategory" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 bg-white focus:border-[#3E0B4B] focus:ring-2 focus:ring-[#3E0B4B]/20 outline-none">
+                <option value="Kafe / Kedai Minuman">Kafe / Kedai Minuman</option>
+                <option value="Warung / Rumah Makan">Warung / Rumah Makan</option>
+                <option value="Toko / Minimarket / Grosir">Toko / Minimarket / Grosir</option>
+                <option value="Sekolah / Kampus">Sekolah / Kampus</option>
+                <option value="Kantor / Instansi">Kantor / Instansi</option>
+                <option value="Event / Bazar / Beach Club">Event / Bazar / Beach Club</option>
+                <option value="Lainnya">Lainnya</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Wilayah Bali & Lokasi Spesifik / Alamat -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="planArea" class="block text-xs font-semibold text-slate-700 mb-1">Wilayah / Area Bali <span class="text-rose-500">*</span></label>
+              <select id="planArea" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 bg-white focus:border-[#3E0B4B] focus:ring-2 focus:ring-[#3E0B4B]/20 outline-none">
+                <option value="Denpasar">Denpasar</option>
+                <option value="Badung (Kuta/Seminyak/Canggu)">Badung (Kuta/Seminyak/Canggu)</option>
+                <option value="Badung (Jimbaran/Nusa Dua/Uluwatu)">Badung (Jimbaran/Nusa Dua/Uluwatu)</option>
+                <option value="Gianyar (Ubud/Sukawati)">Gianyar (Ubud/Sukawati)</option>
+                <option value="Tabanan">Tabanan</option>
+                <option value="Mengwi / Dalung">Mengwi / Dalung</option>
+                <option value="Sanur">Sanur</option>
+                <option value="Lainnya (Bali)">Lainnya (Bali)</option>
+              </select>
+            </div>
+            <div>
+              <label for="planAddress" class="block text-xs font-semibold text-slate-700 mb-1">Lokasi Spesifik / Jalan / Patokan <span class="text-rose-500">*</span></label>
+              <input type="text" id="planAddress" required placeholder="Contoh: Jl. Raya Kerobokan No. 72, Kuta Utara" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:border-[#3E0B4B] focus:ring-2 focus:ring-[#3E0B4B]/20 outline-none" />
+            </div>
+          </div>
+
+          <!-- Target PIC, Jabatan & Kontak -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label for="planTargetPic" class="block text-xs font-semibold text-slate-700 mb-1">Target PIC / Kontak</label>
+              <input type="text" id="planTargetPic" placeholder="Contoh: Ibu Agung Ratna" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:border-[#3E0B4B] focus:ring-2 focus:ring-[#3E0B4B]/20 outline-none" />
+            </div>
+            <div>
+              <label for="planTargetRole" class="block text-xs font-semibold text-slate-700 mb-1">Jabatan PIC</label>
+              <input type="text" id="planTargetRole" placeholder="Contoh: Owner / Manager" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:border-[#3E0B4B] focus:ring-2 focus:ring-[#3E0B4B]/20 outline-none" />
+            </div>
+            <div>
+              <label for="planTargetPhone" class="block text-xs font-semibold text-slate-700 mb-1">No. HP / WhatsApp</label>
+              <input type="tel" id="planTargetPhone" placeholder="Contoh: 081239876543" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:border-[#3E0B4B] focus:ring-2 focus:ring-[#3E0B4B]/20 outline-none" />
+            </div>
+          </div>
+
+          <!-- Status Rencana & Estimasi Potensi Order -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label for="planStatus" class="block text-xs font-semibold text-slate-700 mb-1">Status Rencana <span class="text-rose-500">*</span></label>
+              <select id="planStatus" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 bg-white focus:border-[#3E0B4B] focus:ring-2 focus:ring-[#3E0B4B]/20 outline-none">
+                <option value="Terjadwal">Terjadwal</option>
+                <option value="Reschedule">Reschedule</option>
+                <option value="Selesai">Selesai</option>
+                <option value="Dibatalkan">Dibatalkan</option>
+              </select>
+            </div>
+            <div>
+              <label for="planEstimatedOrder" class="block text-xs font-semibold text-slate-700 mb-1">Estimasi Potensi Order (Rp)</label>
+              <input type="number" id="planEstimatedOrder" min="0" step="50000" placeholder="Contoh: 7500000" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:border-[#3E0B4B] focus:ring-2 focus:ring-[#3E0B4B]/20 outline-none" />
+            </div>
+            <div class="flex items-end pb-2">
+              <label class="inline-flex items-center gap-2 text-xs font-bold text-[#3E0B4B] cursor-pointer">
+                <input type="checkbox" id="planIsBigOrder" class="w-4 h-4 rounded border-purple-300 text-[#3E0B4B] focus:ring-[#3E0B4B]" />
+                <span>Agenda Target Big Order</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Tujuan Kunjungan & Catatan Persiapan -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="planPurpose" class="block text-xs font-semibold text-slate-700 mb-1">Tujuan / Agenda Kunjungan <span class="text-rose-500">*</span></label>
+              <textarea id="planPurpose" rows="3" required placeholder="Contoh: Presentasi varian EXO drinks, bawa tester & katalog harga..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:border-[#3E0B4B] focus:ring-2 focus:ring-[#3E0B4B]/20 outline-none"></textarea>
+            </div>
+            <div>
+              <label for="planNotes" class="block text-xs font-semibold text-slate-700 mb-1">Catatan Rute / Persiapan</label>
+              <textarea id="planNotes" rows="3" placeholder="Contoh: Konfirmasi jam via WA sebelum berangkat, bawa cooler box..." class="w-full px-3 py-2 text-sm rounded-xl border border-slate-300 focus:border-[#3E0B4B] focus:ring-2 focus:ring-[#3E0B4B]/20 outline-none"></textarea>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="pt-3 border-t border-slate-200 flex items-center justify-end gap-2.5">
+            <button type="button" onclick="closePlanModal()" class="px-4 py-2 rounded-xl border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition cursor-pointer">
+              Batal
+            </button>
+            <button type="submit" class="px-5 py-2 rounded-xl bg-[#3E0B4B] hover:bg-[#2A0533] text-white text-sm font-semibold shadow-sm transition cursor-pointer">
+              Simpan Rencana Kunjungan
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Detail Kunjungan -->
+  <div id="detailModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="detailModalTitle" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+      <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity" onclick="closeDetailModal()"></div>
+      <div class="relative inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border border-slate-200 z-10">
+        <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="px-2.5 py-1.5 rounded-xl bg-white shadow-xs shrink-0 flex items-center justify-center">
+              <img
+                src="image_7241d4.png"
+                alt="Logo EXO drinks"
+                class="h-8 w-auto object-contain"
+                onerror="this.parentElement.classList.add('hidden')"
+              />
+            </div>
+            <div class="min-w-0">
+              <span class="text-[11px] uppercase tracking-wider font-semibold text-teal-300">Detail Log Kunjungan • EXO drinks</span>
+              <h3 id="detailModalTitle" class="text-base font-bold mt-0.5 truncate">Nama Outlet</h3>
+            </div>
+          </div>
+          <button type="button" onclick="closeDetailModal()" class="p-1.5 rounded-lg hover:bg-white/10 text-white transition cursor-pointer shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div id="detailModalBody" class="p-6 space-y-3 text-sm text-slate-700">
+          <!-- Diisi dinamis -->
+        </div>
+        <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2">
+          <button type="button" onclick="closeDetailModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold cursor-pointer">
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Konfirmasi Hapus / Reset (Pengganti confirm()) -->
+  <div id="confirmModal" class="fixed inset-0 z-50 hidden overflow-y-auto" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:p-0">
+      <div class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs transition-opacity" onclick="closeConfirmModal()"></div>
+      <div class="relative inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full border border-slate-200 z-10 p-6">
+        <div class="flex items-start gap-3.5">
+          <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <div>
+            <h3 id="confirmModalTitle" class="text-base font-bold text-slate-900">Konfirmasi Tindakan</h3>
+            <p id="confirmModalMessage" class="text-xs sm:text-sm text-slate-600 mt-1">Apakah Anda yakin ingin melanjutkan?</p>
+          </div>
+        </div>
+        <div class="mt-6 flex items-center justify-end gap-2.5">
+          <button type="button" onclick="closeConfirmModal()" class="px-4 py-2 rounded-xl border border-slate-300 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer">
+            Batal
+          </button>
+          <button type="button" id="confirmModalActionBtn" class="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs sm:text-sm font-semibold cursor-pointer">
+            Ya, Lanjutkan
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Application Logic -->
+  <script>
+    const STORAGE_KEY = 'exodrinks_bali_canvasing_logs_v1';
+    const PLAN_STORAGE_KEY = 'exodrinks_bali_visit_plans_v1';
+
+    // 1 data contoh log canvasing untuk tim marketing CV. EXODRINKS BALI
+    const INITIAL_SAMPLE_DATA = [
+      {
+        id: 'exo-101',
+        visitDate: '2026-11-25',
+        visitTime: '09:30',
+        outletName: 'Kopi & Es Segar Berawa',
+        outletCategory: 'Kafe / Kedai Minuman',
+        visitArea: 'Badung (Kuta/Seminyak/Canggu)',
+        outletAddress: 'Jl. Pantai Berawa No. 88, Tibubeneng',
+        picName: 'Putu Adi Wijaya',
+        picRole: 'Owner & Barista Lead',
+        contactPhone: '081238901122',
+        visitOutcome: 'Deal / Closing',
+        estimatedOrder: 7500000,
+        isBigOrder: true,
+        accountTier: 'Multi-Outlet / Retail Chain',
+        negotiationStage: 'PO Terbit / Closing',
+        orderTerms: 'MOQ 450 unit/minggu, pengiriman 2x/minggu',
+        visitNotes: 'Tertarik paket minuman segar & varian botol dingin siap saji untuk menu harian di cabang Berawa.',
+        nextAction: 'Kirim pengiriman perdana 450 unit besok pukul 08.00 WITA & siapkan cooler box display.'
+      }
+    ];
+
+    // 1 data contoh rencana kunjungan (itinerary per tanggal, jam & lokasi spesifik di Bali)
+    const INITIAL_SAMPLE_PLANS = [
+      {
+        id: 'plan-201',
+        planDate: '2026-11-26',
+        startTime: '09:00',
+        endTime: '10:30',
+        locationName: 'Kedai Kopi & Es Segar Kerobokan',
+        category: 'Kafe / Kedai Minuman',
+        area: 'Badung (Kuta/Seminyak/Canggu)',
+        address: 'Jl. Raya Kerobokan No. 72, Kuta Utara',
+        targetPic: 'Ibu Agung Ratna',
+        targetRole: 'Owner',
+        targetPhone: '081239876543',
+        status: 'Terjadwal',
+        estimatedOrder: 8000000,
+        isBigOrder: true,
+        purpose: 'Negosiasi kontrak pasokan Big Order untuk outlet cabang & penentuan harga grosir/MOQ.',
+        notes: 'Sudah konfirmasi via WA, bawa proposal paket Big Order & sampel produk.'
+      }
+    ];
+
+    let canvasingLogs = [];
+    let filteredLogs = [];
+    let onlyBigOrderFilter = false;
+    let visitPlans = [];
+    let filteredPlans = [];
+    let draftAttachments = [];
+    let outcomeChartInstance = null;
+    let areaChartInstance = null;
+    let pendingConfirmCallback = null;
+
+    const MAX_ATTACHMENT_SIZE_BYTES = 1.5 * 1024 * 1024; // 1.5 MB per file agar aman di localStorage
+
+    // Mendapatkan tanggal hari ini dalam format YYYY-MM-DD
+    function getTodayDateString() {
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    // Helper pengecekan Big Order (ditandai eksplisit atau nilai estimasi >= Rp 5.000.000)
+    const BIG_ORDER_THRESHOLD = 5000000;
+    function isBigOrderItem(item) {
+      if (!item) return false;
+      return Boolean(item.isBigOrder) || (Number(item.estimatedOrder) || 0) >= BIG_ORDER_THRESHOLD;
+    }
+
+    // Format Rupiah IDR
+    function formatRupiah(amount) {
+      const num = Number(amount) || 0;
+      return new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        maximumFractionDigits: 0
+      }).format(num);
+    }
+
+    // Format Tanggal Indonesia (contoh: Rabu, 25 Nov 2026)
+    function formatTanggalIndo(dateStr) {
+      if (!dateStr) return '-';
+      const parts = dateStr.split('-');
+      if (parts.length !== 3) return dateStr;
+      const dateObj = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+      return dateObj.toLocaleDateString('id-ID', {
+        weekday: 'short',
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      });
+    }
+
+    // Set label tanggal aktif di header
+    function renderActiveHeaderDate() {
+      const now = new Date();
+      const formatted = now.toLocaleDateString('id-ID', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      });
+      const el = document.getElementById('activeDateLabel');
+      if (el) {
+        el.textContent = formatted;
+      }
+    }
+
+    // Tampilkan notifikasi toast (pengganti alert)
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+
+      const styles = {
+        success: 'bg-emerald-900 text-white border-emerald-700',
+        info: 'bg-slate-900 text-white border-slate-700',
+        warning: 'bg-amber-900 text-white border-amber-700',
+        error: 'bg-rose-900 text-white border-rose-700'
+      };
+
+      const toast = document.createElement('div');
+      toast.className = `pointer-events-auto flex items-center justify-between gap-3 px-4 py-3 rounded-xl border shadow-lg text-xs sm:text-sm font-medium transition-all duration-300 ${styles[type] || styles.info}`;
+      toast.innerHTML = `
+        <span>${escapeHTML(message)}</span>
+        <button type="button" onclick="this.parentElement.remove()" class="text-white/75 hover:text-white font-bold cursor-pointer">✕</button>
+      `;
+
+      container.appendChild(toast);
+      setTimeout(() => {
+        if (toast.parentElement) {
+          toast.remove();
+        }
+      }, 3500);
+    }
+
+    // Escape HTML untuk mencegah XSS
+    function escapeHTML(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // Muat data dari localStorage
+    function loadLogsFromStorage() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) {
+          canvasingLogs = [...INITIAL_SAMPLE_DATA];
+          saveLogsToStorage();
+        } else {
+          const parsed = JSON.parse(raw);
+          canvasingLogs = Array.isArray(parsed) ? parsed : [...INITIAL_SAMPLE_DATA];
+        }
+      } catch (err) {
+        console.error('Gagal memuat data localStorage:', err);
+        canvasingLogs = [...INITIAL_SAMPLE_DATA];
+        showToast('Terjadi kendala saat membaca penyimpanan lokal, data contoh dimuat.', 'warning');
+      }
+    }
+
+    // Simpan data ke localStorage
+    function saveLogsToStorage() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(canvasingLogs));
+        return true;
+      } catch (err) {
+        console.error('Gagal menyimpan ke localStorage:', err);
+        showToast('Penyimpanan browser penuh karena ukuran foto/file terlalu besar. Hapus beberapa lampiran atau gunakan ukuran file lebih kecil.', 'error');
+        return false;
+      }
+    }
+
+    // Baca file sebagai Data URL dengan Promise
+    function readFileAsDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(reader.error || new Error('Gagal membaca file'));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Tangani pemilihan foto / file baru pada form log canvasing
+    async function handleAttachmentFilesSelected(event) {
+      const input = event.target;
+      const files = Array.from(input.files || []);
+      if (files.length === 0) return;
+
+      for (const file of files) {
+        if (file.size > MAX_ATTACHMENT_SIZE_BYTES) {
+          showToast(`File "${file.name}" melebihi batas 1,5 MB dan dilewati.`, 'warning');
+          continue;
+        }
+
+        try {
+          const dataUrl = await readFileAsDataUrl(file);
+          const isImage = file.type.startsWith('image/') || /\.(jpg|jpeg|png|gif|webp)$/i.test(file.name);
+          draftAttachments.push({
+            id: `att-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+            name: file.name,
+            mimeType: file.type || 'application/octet-stream',
+            size: file.size,
+            isImage,
+            dataUrl,
+            stage: 'Saat Kunjungan',
+            caption: ''
+          });
+        } catch (err) {
+          console.error('Gagal memproses file:', err);
+          showToast(`Gagal memuat file "${file.name}".`, 'error');
+        }
+      }
+
+      input.value = '';
+      renderAttachmentDraftList();
+    }
+
+    // Render daftar lampiran draf beserta kolom keterangan (caption) dan momen (Saat Kunjungan / Saat Selesai)
+    function renderAttachmentDraftList() {
+      const listEl = document.getElementById('attachmentDraftList');
+      const emptyTextEl = document.getElementById('attachmentDraftEmptyText');
+      if (!listEl || !emptyTextEl) return;
+
+      listEl.innerHTML = '';
+
+      if (!draftAttachments || draftAttachments.length === 0) {
+        emptyTextEl.classList.remove('hidden');
+        return;
+      }
+
+      emptyTextEl.classList.add('hidden');
+
+      draftAttachments.forEach((att, idx) => {
+        const sizeKB = Math.max(1, Math.round((Number(att.size) || 0) / 1024));
+        const previewHtml = att.isImage && att.dataUrl
+          ? `<img src="${att.dataUrl}" alt="${escapeHTML(att.name)}" class="w-16 h-16 rounded-xl object-cover border border-slate-200 bg-white shrink-0" />`
+          : `<div class="w-16 h-16 rounded-xl bg-white border border-slate-200 flex flex-col items-center justify-center text-slate-600 shrink-0 px-1 text-center">
+               <svg class="w-5 h-5 text-teal-600 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                 <path stroke-linecap="round" stroke-linejoin="round" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+               </svg>
+               <span class="text-[9px] font-bold uppercase truncate w-full">${escapeHTML((att.name.split('.').pop() || 'FILE'))}</span>
+             </div>`;
+
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-xl border border-slate-200 p-3 flex flex-col sm:flex-row items-start gap-3 shadow-2xs';
+        card.innerHTML = `
+          ${previewHtml}
+          <div class="flex-1 min-w-0 w-full space-y-2">
+            <div class="flex items-start justify-between gap-2">
+              <div class="min-w-0">
+                <p class="text-xs font-bold text-slate-800 truncate" title="${escapeHTML(att.name)}">${escapeHTML(att.name)}</p>
+                <p class="text-[11px] text-slate-400">${sizeKB} KB</p>
+              </div>
+              <button
+                type="button"
+                onclick="removeDraftAttachment(${idx})"
+                class="px-2 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 text-[11px] font-semibold transition cursor-pointer shrink-0"
+              >
+                Hapus
+              </button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <select
+                aria-label="Waktu pengambilan foto atau file"
+                onchange="updateDraftAttachmentStage(${idx}, this.value)"
+                class="px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 bg-slate-50 focus:bg-white focus:border-teal-500 outline-none"
+              >
+                <option value="Saat Kunjungan" ${att.stage === 'Saat Kunjungan' ? 'selected' : ''}>Saat Kunjungan</option>
+                <option value="Saat Selesai Kunjungan" ${att.stage === 'Saat Selesai Kunjungan' ? 'selected' : ''}>Saat Selesai Kunjungan</option>
+              </select>
+              <input
+                type="text"
+                value="${escapeHTML(att.caption || '')}"
+                oninput="updateDraftAttachmentCaption(${idx}, this.value)"
+                placeholder="Tambahkan keterangan foto / file (misal: Foto display & tester selesai meeting)..."
+                class="sm:col-span-2 px-2.5 py-1.5 text-xs rounded-lg border border-slate-300 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 outline-none"
+              />
+            </div>
+          </div>
+        `;
+        listEl.appendChild(card);
+      });
+    }
+
+    function updateDraftAttachmentStage(index, stageValue) {
+      if (!draftAttachments[index]) return;
+      draftAttachments[index].stage = stageValue;
+    }
+
+    function updateDraftAttachmentCaption(index, captionValue) {
+      if (!draftAttachments[index]) return;
+      draftAttachments[index].caption = captionValue;
+    }
+
+    function removeDraftAttachment(index) {
+      draftAttachments.splice(index, 1);
+      renderAttachmentDraftList();
+    }
+
+    // Muat rencana kunjungan dari localStorage
+    function loadPlansFromStorage() {
+      try {
+        const raw = localStorage.getItem(PLAN_STORAGE_KEY);
+        if (!raw) {
+          visitPlans = [...INITIAL_SAMPLE_PLANS];
+          savePlansToStorage();
+        } else {
+          const parsed = JSON.parse(raw);
+          visitPlans = Array.isArray(parsed) ? parsed : [...INITIAL_SAMPLE_PLANS];
+        }
+      } catch (err) {
+        console.error('Gagal memuat rencana kunjungan localStorage:', err);
+        visitPlans = [...INITIAL_SAMPLE_PLANS];
+      }
+    }
+
+    // Simpan rencana kunjungan ke localStorage
+    function savePlansToStorage() {
+      try {
+        localStorage.setItem(PLAN_STORAGE_KEY, JSON.stringify(visitPlans));
+      } catch (err) {
+        console.error('Gagal menyimpan rencana kunjungan:', err);
+        showToast('Gagal menyimpan rencana kunjungan ke browser.', 'error');
+      }
+    }
+
+    // Perbarui badge ringkasan rencana kunjungan
+    function updatePlanBadges() {
+      const todayStr = getTodayDateString();
+      const scheduledCount = visitPlans.filter((p) => p.status === 'Terjadwal' || p.status === 'Reschedule').length;
+      const todayCount = visitPlans.filter((p) => p.planDate === todayStr && p.status !== 'Dibatalkan').length;
+
+      const schedEl = document.getElementById('kpiScheduledCountBadge');
+      const todayEl = document.getElementById('kpiTodayPlanCountBadge');
+      if (schedEl) schedEl.textContent = `${scheduledCount} Aktif / Terjadwal`;
+      if (todayEl) todayEl.textContent = `${todayCount} Hari Ini`;
+    }
+
+    // Terapkan filter rencana kunjungan per tanggal, jam, wilayah & status
+    function applyPlanFilters() {
+      const dateFilter = document.getElementById('planFilterDate')?.value || '';
+      const timeSlot = document.getElementById('planFilterTimeSlot')?.value || 'ALL';
+      const areaFilter = document.getElementById('planFilterArea')?.value || 'ALL';
+      const statusFilter = document.getElementById('planFilterStatus')?.value || 'ALL';
+      const searchTerm = (document.getElementById('planSearchInput')?.value || '').trim().toLowerCase();
+
+      filteredPlans = visitPlans.filter((plan) => {
+        if (dateFilter && plan.planDate !== dateFilter) return false;
+        if (areaFilter !== 'ALL' && plan.area !== areaFilter) return false;
+        if (statusFilter !== 'ALL' && plan.status !== statusFilter) return false;
+
+        if (timeSlot !== 'ALL') {
+          const hour = Number((plan.startTime || '00:00').split(':')[0]) || 0;
+          if (timeSlot === 'MORNING' && (hour < 6 || hour >= 12)) return false;
+          if (timeSlot === 'AFTERNOON' && (hour < 12 || hour >= 18)) return false;
+          if (timeSlot === 'EVENING' && hour < 18) return false;
+        }
+
+        if (searchTerm) {
+          const haystack = [
+            plan.locationName,
+            plan.category,
+            plan.area,
+            plan.address,
+            plan.targetPic,
+            plan.targetRole,
+            plan.targetPhone,
+            plan.purpose,
+            plan.notes,
+            plan.status
+          ]
+            .join(' ')
+            .toLowerCase();
+
+          if (!haystack.includes(searchTerm)) return false;
+        }
+
+        return true;
+      });
+
+      // Urutkan per tanggal (asc) lalu jam mulai (asc) untuk alur jadwal harian
+      filteredPlans.sort((a, b) => {
+        const dtA = `${a.planDate || ''} ${a.startTime || ''}`;
+        const dtB = `${b.planDate || ''} ${b.startTime || ''}`;
+        return dtA.localeCompare(dtB);
+      });
+
+      updatePlanBadges();
+      renderVisitScheduleTimeline(filteredPlans);
+
+      const countLabel = document.getElementById('planResultCountLabel');
+      if (countLabel) {
+        countLabel.textContent = `Menampilkan ${filteredPlans.length} dari ${visitPlans.length} rencana kunjungan`;
+      }
+    }
+
+    function filterTodayPlans() {
+      document.getElementById('planFilterDate').value = getTodayDateString();
+      applyPlanFilters();
+      showToast('Menampilkan rencana kunjungan untuk hari ini.', 'info');
+    }
+
+    function resetPlanFilters() {
+      document.getElementById('planFilterDate').value = '';
+      document.getElementById('planFilterTimeSlot').value = 'ALL';
+      document.getElementById('planFilterArea').value = 'ALL';
+      document.getElementById('planFilterStatus').value = 'ALL';
+      document.getElementById('planSearchInput').value = '';
+      applyPlanFilters();
+    }
+
+    // Badge status rencana kunjungan
+    function getPlanStatusBadge(status) {
+      switch (status) {
+        case 'Terjadwal':
+          return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-100 text-[#3E0B4B] border border-purple-200">Terjadwal</span>';
+        case 'Reschedule':
+          return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200">Reschedule</span>';
+        case 'Selesai':
+          return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">Selesai</span>';
+        case 'Dibatalkan':
+          return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-100 text-rose-800 border border-rose-200">Dibatalkan</span>';
+        default:
+          return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">${escapeHTML(status)}</span>`;
+      }
+    }
+
+    // Render timeline rencana kunjungan yang dikelompokkan per tanggal & jam
+    function renderVisitScheduleTimeline(plans) {
+      const container = document.getElementById('visitScheduleTimeline');
+      const emptyBox = document.getElementById('planEmptyStateBox');
+      if (!container || !emptyBox) return;
+
+      container.innerHTML = '';
+
+      if (!plans || plans.length === 0) {
+        emptyBox.classList.remove('hidden');
+        container.classList.add('hidden');
+        return;
+      }
+
+      emptyBox.classList.add('hidden');
+      container.classList.remove('hidden');
+
+      const todayStr = getTodayDateString();
+      const groupedByDate = {};
+      plans.forEach((plan) => {
+        const key = plan.planDate || 'Tanpa Tanggal';
+        if (!groupedByDate[key]) groupedByDate[key] = [];
+        groupedByDate[key].push(plan);
+      });
+
+      Object.keys(groupedByDate).forEach((dateKey) => {
+        const itemsForDate = groupedByDate[dateKey];
+        const dateGroupCard = document.createElement('div');
+        dateGroupCard.className = 'rounded-2xl border border-slate-200/90 bg-slate-50/40 overflow-hidden';
+
+        const isToday = dateKey === todayStr;
+        const headerHtml = `
+          <div class="px-4 py-3 bg-white border-b border-slate-200/80 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2.5">
+              <span class="w-8 h-8 rounded-xl ${isToday ? 'bg-[#3E0B4B] text-white' : 'bg-teal-50 text-teal-700'} flex items-center justify-center font-bold text-xs">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </span>
+              <div>
+                <div class="flex items-center gap-2">
+                  <h3 class="text-sm font-bold text-slate-900">${escapeHTML(formatTanggalIndo(dateKey))}</h3>
+                  ${isToday ? '<span class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-purple-100 text-[#3E0B4B]">Hari Ini</span>' : ''}
+                </div>
+                <p class="text-[11px] text-slate-500">${itemsForDate.length} titik rencana kunjungan</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onclick="openPlanModal(null, '${escapeHTML(dateKey)}')"
+              class="text-xs font-semibold text-[#3E0B4B] hover:underline cursor-pointer no-print"
+            >
+              + Jadwal di Tanggal Ini
+            </button>
+          </div>
+        `;
+
+        const slotsHtml = itemsForDate.map((plan) => {
+          const timeRange = plan.endTime
+            ? `${escapeHTML(plan.startTime)} - ${escapeHTML(plan.endTime)} WITA`
+            : `${escapeHTML(plan.startTime || '-')} WITA`;
+          const waDigits = normalizeWhatsAppNumber(plan.targetPhone);
+          const waUrl = waDigits ? `https://wa.me/${waDigits}` : '';
+          const estText = Number(plan.estimatedOrder) > 0 ? formatRupiah(plan.estimatedOrder) : '';
+
+          return `
+            <div class="p-4 bg-white flex flex-col lg:flex-row lg:items-center justify-between gap-4 hover:bg-purple-50/20 transition">
+              <!-- Jam & Lokasi -->
+              <div class="flex items-start gap-3.5 min-w-0 flex-1">
+                <div class="shrink-0 w-28 sm:w-32 px-2.5 py-2 rounded-xl bg-purple-50/90 border border-purple-200/70 text-center">
+                  <div class="text-xs font-extrabold text-[#3E0B4B]">${timeRange}</div>
+                  <div class="text-[11px] font-medium text-purple-800/80 mt-0.5 truncate" title="${escapeHTML(plan.area)}">${escapeHTML(plan.area)}</div>
+                </div>
+
+                <div class="min-w-0 flex-1">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <h4 class="text-sm font-bold text-slate-900">${escapeHTML(plan.locationName)}</h4>
+                    ${isBigOrderItem(plan) ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-[#3E0B4B] text-white">BIG ORDER</span>' : ''}
+                    ${getPlanStatusBadge(plan.status)}
+                    ${plan.category ? `<span class="text-[11px] font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">${escapeHTML(plan.category)}</span>` : ''}
+                  </div>
+
+                  <p class="text-xs text-slate-600 mt-1 flex items-start gap-1">
+                    <svg class="w-3.5 h-3.5 text-teal-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span><strong class="text-slate-800">Lokasi:</strong> ${escapeHTML(plan.address || plan.area)}</span>
+                  </p>
+
+                  <p class="text-xs text-slate-700 mt-1">
+                    <strong class="text-slate-800">Tujuan:</strong> ${escapeHTML(plan.purpose)}
+                  </p>
+
+                  <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-xs text-slate-500">
+                    ${plan.targetPic ? `<span>PIC: <strong class="text-slate-700">${escapeHTML(plan.targetPic)}</strong>${plan.targetRole ? ` (${escapeHTML(plan.targetRole)})` : ''}</span>` : ''}
+                    ${plan.targetPhone ? `<span class="font-mono text-slate-700">${escapeHTML(plan.targetPhone)}</span>` : ''}
+                    ${estText ? `<span class="font-semibold text-emerald-700">Est: ${escapeHTML(estText)}</span>` : ''}
+                  </div>
+
+                  ${plan.notes ? `<p class="text-[11px] text-slate-500 italic mt-1">Catatan rute/persiapan: ${escapeHTML(plan.notes)}</p>` : ''}
+                </div>
+              </div>
+
+              <!-- Aksi Cepat Ubah Status, Konversi ke Log, Edit & Hapus -->
+              <div class="flex flex-wrap lg:flex-col items-stretch lg:items-end justify-end gap-2 shrink-0 no-print">
+                <div class="flex items-center gap-1.5">
+                  <select
+                    aria-label="Ubah status rencana kunjungan"
+                    onchange="updatePlanStatus('${escapeHTML(plan.id)}', this.value)"
+                    class="px-2.5 py-1.5 text-xs font-semibold rounded-lg border border-slate-300 bg-white text-slate-700 focus:border-[#3E0B4B] outline-none cursor-pointer"
+                  >
+                    <option value="Terjadwal" ${plan.status === 'Terjadwal' ? 'selected' : ''}>Terjadwal</option>
+                    <option value="Reschedule" ${plan.status === 'Reschedule' ? 'selected' : ''}>Reschedule</option>
+                    <option value="Selesai" ${plan.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                    <option value="Dibatalkan" ${plan.status === 'Dibatalkan' ? 'selected' : ''}>Dibatalkan</option>
+                  </select>
+
+                  ${
+                    waDigits
+                      ? `<button type="button" onclick="openWhatsAppDirect('${escapeHTML(plan.targetPhone)}', 'plan', '${escapeHTML(plan.id)}')" class="px-2.5 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-semibold transition cursor-pointer">WA</button>`
+                      : ''
+                  }
+                </div>
+
+                <div class="flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onclick="convertPlanToCanvasing('${escapeHTML(plan.id)}')"
+                    class="px-2.5 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold transition cursor-pointer"
+                    title="Catat hasil kunjungan ini ke Log Canvasing"
+                  >
+                    Catat Hasil
+                  </button>
+                  <button
+                    type="button"
+                    onclick="openPlanModal('${escapeHTML(plan.id)}')"
+                    class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition cursor-pointer"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    onclick="requestDeletePlan('${escapeHTML(plan.id)}')"
+                    class="px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-semibold transition cursor-pointer"
+                  >
+                    Hapus
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        dateGroupCard.innerHTML = `${headerHtml}<div class="divide-y divide-slate-100">${slotsHtml}</div>`;
+        container.appendChild(dateGroupCard);
+      });
+    }
+
+    // Buka Modal Tambah / Edit Rencana Kunjungan
+    function openPlanModal(planId = null, presetDate = null) {
+      const modal = document.getElementById('planModal');
+      const form = document.getElementById('planForm');
+      const titleEl = document.getElementById('planModalTitle');
+      form.reset();
+      document.getElementById('sourcePlanIdForConversion').value = '';
+
+      if (planId) {
+        const plan = visitPlans.find((p) => p.id === planId);
+        if (!plan) return;
+        titleEl.textContent = 'Edit Rencana Kunjungan (Itinerary)';
+        document.getElementById('editPlanId').value = plan.id;
+        document.getElementById('planDate').value = plan.planDate || '';
+        document.getElementById('planStartTime').value = plan.startTime || '09:00';
+        document.getElementById('planEndTime').value = plan.endTime || '';
+        document.getElementById('planLocationName').value = plan.locationName || '';
+        document.getElementById('planCategory').value = plan.category || 'Kafe / Kedai Minuman';
+        document.getElementById('planArea').value = plan.area || 'Denpasar';
+        document.getElementById('planAddress').value = plan.address || '';
+        document.getElementById('planTargetPic').value = plan.targetPic || '';
+        document.getElementById('planTargetRole').value = plan.targetRole || '';
+        document.getElementById('planTargetPhone').value = plan.targetPhone || '';
+        document.getElementById('planStatus').value = plan.status || 'Terjadwal';
+        document.getElementById('planEstimatedOrder').value = plan.estimatedOrder || '';
+        document.getElementById('planIsBigOrder').checked = isBigOrderItem(plan);
+        document.getElementById('planPurpose').value = plan.purpose || '';
+        document.getElementById('planNotes').value = plan.notes || '';
+      } else {
+        titleEl.textContent = 'Tambah Rencana Kunjungan (Itinerary)';
+        document.getElementById('editPlanId').value = '';
+        document.getElementById('planDate').value = presetDate || getTodayDateString();
+        document.getElementById('planStartTime').value = '09:00';
+        document.getElementById('planEndTime').value = '10:30';
+        document.getElementById('planStatus').value = 'Terjadwal';
+        document.getElementById('planIsBigOrder').checked = false;
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closePlanModal() {
+      document.getElementById('planModal').classList.add('hidden');
+    }
+
+    // Simpan data rencana kunjungan
+    function handlePlanFormSubmit(event) {
+      event.preventDefault();
+      const editId = document.getElementById('editPlanId').value.trim();
+
+      const planRecord = {
+        id: editId || `plan-${Date.now()}`,
+        planDate: document.getElementById('planDate').value,
+        startTime: document.getElementById('planStartTime').value,
+        endTime: document.getElementById('planEndTime').value,
+        locationName: document.getElementById('planLocationName').value.trim(),
+        category: document.getElementById('planCategory').value,
+        area: document.getElementById('planArea').value,
+        address: document.getElementById('planAddress').value.trim(),
+        targetPic: document.getElementById('planTargetPic').value.trim(),
+        targetRole: document.getElementById('planTargetRole').value.trim(),
+        targetPhone: document.getElementById('planTargetPhone').value.trim(),
+        status: document.getElementById('planStatus').value,
+        estimatedOrder: Number(document.getElementById('planEstimatedOrder').value) || 0,
+        isBigOrder: Boolean(document.getElementById('planIsBigOrder')?.checked),
+        purpose: document.getElementById('planPurpose').value.trim(),
+        notes: document.getElementById('planNotes').value.trim()
+      };
+
+      if (!planRecord.planDate || !planRecord.startTime || !planRecord.locationName || !planRecord.address || !planRecord.purpose) {
+        showToast('Mohon lengkapi tanggal, jam mulai, nama lokasi, alamat, dan tujuan kunjungan.', 'warning');
+        return;
+      }
+
+      if (editId) {
+        const idx = visitPlans.findIndex((p) => p.id === editId);
+        if (idx !== -1) {
+          visitPlans[idx] = planRecord;
+          showToast('Rencana kunjungan berhasil diperbarui.', 'success');
+        }
+      } else {
+        visitPlans.push(planRecord);
+        showToast('Rencana kunjungan baru berhasil ditambahkan.', 'success');
+      }
+
+      savePlansToStorage();
+      closePlanModal();
+      applyPlanFilters();
+    }
+
+    // Ubah status rencana kunjungan secara langsung
+    function updatePlanStatus(planId, newStatus) {
+      const idx = visitPlans.findIndex((p) => p.id === planId);
+      if (idx === -1) return;
+      visitPlans[idx].status = newStatus;
+      savePlansToStorage();
+      applyPlanFilters();
+      showToast(`Status rencana diubah menjadi "${newStatus}".`, 'info');
+    }
+
+    // Hapus rencana kunjungan dengan modal konfirmasi
+    function requestDeletePlan(planId) {
+      const target = visitPlans.find((p) => p.id === planId);
+      const label = target ? `"${target.locationName}"` : 'rencana ini';
+      openConfirmModal(
+        'Hapus Rencana Kunjungan',
+        `Apakah Anda yakin ingin menghapus rencana kunjungan ${label}?`,
+        'Ya, Hapus',
+        () => {
+          visitPlans = visitPlans.filter((p) => p.id !== planId);
+          savePlansToStorage();
+          applyPlanFilters();
+          showToast('Rencana kunjungan telah dihapus.', 'info');
+        }
+      );
+    }
+
+    // Konversi rencana kunjungan menjadi Log Hasil Canvasing & tandai rencana selesai
+    function convertPlanToCanvasing(planId) {
+      const plan = visitPlans.find((p) => p.id === planId);
+      if (!plan) return;
+
+      openCanvasingModal(null);
+      document.getElementById('visitDate').value = plan.planDate || getTodayDateString();
+      document.getElementById('visitTime').value = plan.startTime || '09:00';
+      document.getElementById('outletName').value = plan.locationName || '';
+      document.getElementById('outletCategory').value = plan.category || 'Kafe / Kedai Minuman';
+      document.getElementById('visitArea').value = plan.area || 'Denpasar';
+      document.getElementById('outletAddress').value = plan.address || '';
+      document.getElementById('picName').value = plan.targetPic || '';
+      document.getElementById('targetPhone').value = plan.targetPhone || '';
+      document.getElementById('estimatedOrder').value = plan.estimatedOrder || '';
+      document.getElementById('isBigOrderTarget').checked = isBigOrderItem(plan);
+      document.getElementById('visitNotes').value = `Realisasi rencana: ${plan.purpose}${plan.notes ? ` | Catatan: ${plan.notes}` : ''}`;
+
+      // Tandai rencana terkait sebagai Selesai agar jadwal terupdate otomatis saat log disimpan
+      plan.status = 'Selesai';
+      savePlansToStorage();
+      applyPlanFilters();
+      showToast('Data rencana disalin ke form Log Canvasing & status rencana ditandai Selesai.', 'info');
+    }
+
+    // Normalisasi nomor telepon ke format internasional Indonesia (62...) untuk tautan WhatsApp
+    function normalizeWhatsAppNumber(phone) {
+      if (!phone) return '';
+      let digits = String(phone).replace(/\D/g, '');
+      if (!digits) return '';
+      if (digits.startsWith('0')) {
+        digits = '62' + digits.slice(1);
+      } else if (digits.startsWith('8')) {
+        digits = '62' + digits;
+      }
+      return digits;
+    }
+
+    // Susun URL WhatsApp langsung (dengan pesan konteks otomatis jika tersedia)
+    function buildWhatsAppUrl(phone, prefillMessage = '') {
+      const digits = normalizeWhatsAppNumber(phone);
+      if (!digits) return '';
+      if (prefillMessage && String(prefillMessage).trim()) {
+        return `https://wa.me/${digits}?text=${encodeURIComponent(String(prefillMessage).trim())}`;
+      }
+      return `https://wa.me/${digits}`;
+    }
+
+    // Buka WhatsApp langsung berdasarkan tipe data ('log' atau 'plan') atau nomor langsung
+    function openWhatsAppDirect(phone, contextType = null, recordId = null) {
+      let message = '';
+
+      if (contextType === 'log' && recordId) {
+        const item = canvasingLogs.find((r) => r.id === recordId);
+        if (item) {
+          const picLabel = item.picName ? ` ${item.picName}` : '';
+          const bigOrderTag = isBigOrderItem(item) ? ' (Big Order / Pasokan Besar)' : '';
+          const orderInfo = Number(item.estimatedOrder) > 0 ? ` dengan estimasi order ${formatRupiah(item.estimatedOrder)}` : '';
+          const termsInfo = item.orderTerms ? ` (${item.orderTerms})` : '';
+          message = `Halo${picLabel}, perkenalkan kami dari marketing CV. EXODRINKS BALI (EXO drinks - The authentic Indonesian drinks). Menindaklanjuti kunjungan & diskusi kami terkait ${item.outletName}${bigOrderTag}${orderInfo}${termsInfo}. Apakah berkenan melanjutkan koordinasi/penawaran? Terima kasih.`;
+        }
+      } else if (contextType === 'plan' && recordId) {
+        const plan = visitPlans.find((p) => p.id === recordId);
+        if (plan) {
+          const picLabel = plan.targetPic ? ` ${plan.targetPic}` : '';
+          const timeLabel = plan.startTime ? ` pukul ${plan.startTime}${plan.endTime ? `-${plan.endTime}` : ''} WITA` : '';
+          const dateLabel = plan.planDate ? ` pada ${formatTanggalIndo(plan.planDate)}` : '';
+          const bigOrderTag = isBigOrderItem(plan) ? ' untuk agenda Big Order' : '';
+          message = `Halo${picLabel}, perkenalkan kami dari marketing CV. EXODRINKS BALI (EXO drinks). Kami menjadwalkan kunjungan ke ${plan.locationName}${bigOrderTag}${dateLabel}${timeLabel}. Mohon konfirmasinya jika waktu tersebut sesuai. Terima kasih.`;
+        }
+      }
+
+      const url = buildWhatsAppUrl(phone, message);
+      if (!url) {
+        showToast('Nomor WhatsApp tidak valid atau belum diisi.', 'warning');
+        return;
+      }
+
+      const openedWindow = window.open(url, '_blank', 'noopener,noreferrer');
+      if (!openedWindow) {
+        window.location.href = url;
+      }
+    }
+
+    // Salin nomor kontak ke clipboard dengan fallback execCommand
+    function copyPhoneNumber(phone) {
+      if (!phone) {
+        showToast('Nomor kontak tidak tersedia.', 'warning');
+        return;
+      }
+      try {
+        const tempInput = document.createElement('input');
+        tempInput.value = phone;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        tempInput.setSelectionRange(0, 99999);
+        const copied = document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        if (copied) {
+          showToast(`Nomor ${phone} berhasil disalin.`, 'success');
+        } else {
+          showToast('Tidak dapat menyalin nomor secara otomatis.', 'warning');
+        }
+      } catch (err) {
+        console.error('Gagal menyalin nomor:', err);
+        showToast('Terjadi kendala saat menyalin nomor.', 'error');
+      }
+    }
+
+    // Badge hasil kunjungan
+    function getOutcomeBadge(outcome) {
+      switch (outcome) {
+        case 'Deal / Closing':
+          return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">Deal / Closing</span>';
+        case 'Tertarik / Follow Up':
+          return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200">Tertarik / Follow Up</span>';
+        case 'Minta Katalog / Proposal':
+          return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-100 text-sky-800 border border-sky-200">Minta Katalog / Proposal</span>';
+        case 'Penolakan / Belum Cocok':
+          return '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-100 text-rose-800 border border-rose-200">Penolakan / Belum Cocok</span>';
+        default:
+          return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">${escapeHTML(outcome || '-')}</span>`;
+      }
+    }
+
+    // Perbarui kartu ringkasan KPI berdasarkan data terfilter
+    function updateKPISummary(logs) {
+      const list = Array.isArray(logs) ? logs : [];
+      const totalVisits = list.length;
+      const dealCount = list.filter((item) => item.visitOutcome === 'Deal / Closing').length;
+      const followUpCount = list.filter(
+        (item) => item.visitOutcome === 'Tertarik / Follow Up' || item.visitOutcome === 'Minta Katalog / Proposal'
+      ).length;
+      const totalEstimated = list.reduce((sum, item) => sum + (Number(item.estimatedOrder) || 0), 0);
+      const bigOrderItems = list.filter((item) => isBigOrderItem(item));
+      const totalBigOrderValue = bigOrderItems.reduce((sum, item) => sum + (Number(item.estimatedOrder) || 0), 0);
+      const conversionRate = totalVisits > 0 ? ((dealCount / totalVisits) * 100).toFixed(1) : '0.0';
+
+      const totalEl = document.getElementById('kpiTotalVisits');
+      const totalSubEl = document.getElementById('kpiTotalVisitsSub');
+      const convEl = document.getElementById('kpiConversionRate');
+      const dealEl = document.getElementById('kpiDealCount');
+      const fuEl = document.getElementById('kpiFollowUpCount');
+      const estEl = document.getElementById('kpiEstimatedValue');
+      const bigValEl = document.getElementById('kpiBigOrderValue');
+      const bigCountEl = document.getElementById('kpiBigOrderCountBadge');
+
+      if (totalEl) totalEl.textContent = String(totalVisits);
+      if (totalSubEl) totalSubEl.textContent = `dari ${canvasingLogs.length} log`;
+      if (convEl) convEl.textContent = `${conversionRate}%`;
+      if (dealEl) dealEl.textContent = `${dealCount} Deal`;
+      if (fuEl) fuEl.textContent = String(followUpCount);
+      if (estEl) estEl.textContent = formatRupiah(totalEstimated);
+      if (bigValEl) bigValEl.textContent = formatRupiah(totalBigOrderValue);
+      if (bigCountEl) bigCountEl.textContent = `${bigOrderItems.length} Akun`;
+    }
+
+    // Render baris tabel log canvasing
+    function renderCanvasingTable(logs) {
+      const tbody = document.getElementById('canvasingTableBody');
+      const emptyBox = document.getElementById('emptyStateBox');
+      if (!tbody || !emptyBox) return;
+
+      tbody.innerHTML = '';
+
+      if (!logs || logs.length === 0) {
+        emptyBox.classList.remove('hidden');
+        return;
+      }
+
+      emptyBox.classList.add('hidden');
+
+      logs.forEach((item) => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50/90 transition align-top';
+
+        const waDigits = normalizeWhatsAppNumber(item.contactPhone);
+        const waUrl = waDigits ? `https://wa.me/${waDigits}` : '';
+        const estText = Number(item.estimatedOrder) > 0 ? formatRupiah(item.estimatedOrder) : 'Rp 0';
+        const isBig = isBigOrderItem(item);
+
+        tr.innerHTML = `
+          <td class="px-4 py-3.5 whitespace-nowrap">
+            <div class="text-xs font-bold text-slate-900">${escapeHTML(formatTanggalIndo(item.visitDate))}</div>
+            <div class="text-xs font-semibold text-teal-700 mt-0.5">${escapeHTML(item.visitTime || '-')} WITA</div>
+          </td>
+
+          <td class="px-4 py-3.5 min-w-[200px]">
+            <div class="flex flex-wrap items-center gap-1.5">
+              <span class="font-bold text-slate-900">${escapeHTML(item.outletName)}</span>
+              ${isBig ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-[#3E0B4B] text-white">BIG ORDER</span>' : ''}
+            </div>
+            <div class="flex flex-wrap items-center gap-1.5 mt-1">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-teal-50 text-teal-800 border border-teal-200/70">
+                ${escapeHTML(item.visitArea)}
+              </span>
+              ${item.accountTier ? `<span class="text-[11px] font-medium text-[#3E0B4B] bg-purple-50 px-2 py-0.5 rounded-md">${escapeHTML(item.accountTier)}</span>` : ''}
+            </div>
+            ${item.outletAddress ? `<div class="text-xs text-slate-500 mt-1">${escapeHTML(item.outletAddress)}</div>` : ''}
+          </td>
+
+          <td class="px-4 py-3.5 min-w-[165px]">
+            <div class="font-semibold text-slate-900 text-xs sm:text-sm">${escapeHTML(item.picName)}</div>
+            <div class="text-xs text-slate-500 mt-0.5">${escapeHTML(item.picRole || 'PIC / Kontak')}</div>
+          </td>
+
+          <td class="px-4 py-3.5 whitespace-nowrap">
+            <div class="font-mono text-xs font-semibold text-slate-800">${escapeHTML(item.contactPhone || '-')}</div>
+            <div class="flex items-center gap-1.5 mt-1.5">
+              <button
+                type="button"
+                onclick="copyPhoneNumber('${escapeHTML(item.contactPhone || '')}')"
+                class="px-2 py-0.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-semibold transition cursor-pointer"
+              >
+                Salin
+              </button>
+              ${
+                waDigits
+                  ? `<button type="button" onclick="openWhatsAppDirect('${escapeHTML(item.contactPhone || '')}', 'log', '${escapeHTML(item.id)}')" class="px-2 py-0.5 rounded-md bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-[11px] font-semibold transition cursor-pointer">WhatsApp</button>`
+                  : ''
+              }
+            </div>
+          </td>
+
+          <td class="px-4 py-3.5 whitespace-nowrap">
+            ${getOutcomeBadge(item.visitOutcome)}
+            <div class="text-xs font-bold text-slate-800 mt-1.5">${escapeHTML(estText)}</div>
+            ${item.negotiationStage ? `<div class="text-[11px] text-purple-800 font-medium mt-0.5">${escapeHTML(item.negotiationStage)}</div>` : ''}
+          </td>
+
+          <td class="px-4 py-3.5 max-w-xs">
+            <p class="text-xs text-slate-700 line-clamp-2">${escapeHTML(item.visitNotes || '-')}</p>
+            ${
+              item.orderTerms
+                ? `<p class="text-[11px] text-purple-900 bg-purple-50/80 border border-purple-200/70 rounded-lg px-2 py-1 mt-1 line-clamp-1"><strong class="font-semibold">Syarat/MOQ:</strong> ${escapeHTML(item.orderTerms)}</p>`
+                : ''
+            }
+            ${
+              item.nextAction
+                ? `<p class="text-[11px] text-teal-800 bg-teal-50/80 border border-teal-200/60 rounded-lg px-2 py-1 mt-1.5 line-clamp-2"><strong class="font-semibold">Next:</strong> ${escapeHTML(item.nextAction)}</p>`
+                : ''
+            }
+            ${
+              Array.isArray(item.attachments) && item.attachments.length > 0
+                ? `<div class="mt-1.5 flex flex-wrap items-center gap-1.5">
+                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-purple-50 text-[#3E0B4B] border border-purple-200/80">
+                       ${item.attachments.length} Foto/File
+                     </span>
+                     <span class="text-[11px] text-slate-500 truncate max-w-[190px]" title="${escapeHTML(item.attachments[0].caption || item.attachments[0].name)}">
+                       ${escapeHTML(item.attachments[0].caption || item.attachments[0].name)}
+                     </span>
+                   </div>`
+                : ''
+            }
+          </td>
+
+          <td class="px-4 py-3.5 text-right whitespace-nowrap">
+            <div class="inline-flex items-center justify-end gap-1.5">
+              <button
+                type="button"
+                onclick="openDetailModal('${escapeHTML(item.id)}')"
+                class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition cursor-pointer"
+              >
+                Detail
+              </button>
+              <button
+                type="button"
+                onclick="openCanvasingModal('${escapeHTML(item.id)}')"
+                class="px-2.5 py-1.5 rounded-lg bg-teal-50 hover:bg-teal-100 text-teal-700 text-xs font-semibold transition cursor-pointer"
+              >
+                Edit
+              </button>
+              <button
+                type="button"
+                onclick="requestDeleteRecord('${escapeHTML(item.id)}')"
+                class="px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-semibold transition cursor-pointer"
+              >
+                Hapus
+              </button>
+            </div>
+          </td>
+        `;
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Render & perbarui grafik Chart.js (Distribusi Hasil & Performa Wilayah)
+    function updateCharts(logs) {
+      if (typeof Chart === 'undefined') return;
+      const list = Array.isArray(logs) ? logs : [];
+
+      const outcomeLabels = [
+        'Deal / Closing',
+        'Tertarik / Follow Up',
+        'Minta Katalog / Proposal',
+        'Penolakan / Belum Cocok'
+      ];
+      const outcomeCounts = outcomeLabels.map(
+        (label) => list.filter((item) => item.visitOutcome === label).length
+      );
+
+      const outcomeCtx = document.getElementById('outcomeChartCanvas')?.getContext('2d');
+      if (outcomeCtx) {
+        if (outcomeChartInstance) {
+          outcomeChartInstance.destroy();
+        }
+        outcomeChartInstance = new Chart(outcomeCtx, {
+          type: 'doughnut',
+          data: {
+            labels: outcomeLabels,
+            datasets: [
+              {
+                data: outcomeCounts,
+                backgroundColor: ['#059669', '#D97706', '#0284C7', '#E11D48'],
+                borderColor: '#FFFFFF',
+                borderWidth: 2
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  boxWidth: 12,
+                  padding: 12,
+                  font: { family: 'Inter', size: 11 }
+                }
+              }
+            }
+          }
+        });
+      }
+
+      const areaMap = {};
+      list.forEach((item) => {
+        const area = item.visitArea || 'Lainnya (Bali)';
+        areaMap[area] = (areaMap[area] || 0) + 1;
+      });
+      const areaLabels = Object.keys(areaMap);
+      const areaCounts = areaLabels.map((key) => areaMap[key]);
+
+      const areaCtx = document.getElementById('areaChartCanvas')?.getContext('2d');
+      if (areaCtx) {
+        if (areaChartInstance) {
+          areaChartInstance.destroy();
+        }
+        areaChartInstance = new Chart(areaCtx, {
+          type: 'bar',
+          data: {
+            labels: areaLabels.length > 0 ? areaLabels : ['Belum Ada Data'],
+            datasets: [
+              {
+                label: 'Jumlah Kunjungan',
+                data: areaCounts.length > 0 ? areaCounts : [0],
+                backgroundColor: '#3E0B4B',
+                borderRadius: 8,
+                maxBarThickness: 38
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: { stepSize: 1, font: { family: 'Inter', size: 11 } }
+              },
+              x: {
+                ticks: { font: { family: 'Inter', size: 11 } }
+              }
+            },
+            plugins: {
+              legend: {
+                display: false
+              }
+            }
+          }
+        });
+      }
+    }
+
+    // Terapkan filter & pencarian (Log Hasil Canvasing)
+    function applyFilters() {
+      const searchTerm = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+      const areaFilter = document.getElementById('filterArea')?.value || 'ALL';
+      const outcomeFilter = document.getElementById('filterOutcome')?.value || 'ALL';
+      const dateFrom = document.getElementById('filterDateFrom')?.value || '';
+      const dateTo = document.getElementById('filterDateTo')?.value || '';
+
+      filteredLogs = canvasingLogs.filter((item) => {
+        if (onlyBigOrderFilter && !isBigOrderItem(item)) return false;
+        if (areaFilter !== 'ALL' && item.visitArea !== areaFilter) return false;
+        if (outcomeFilter !== 'ALL' && item.visitOutcome !== outcomeFilter) return false;
+        if (dateFrom && (item.visitDate || '') < dateFrom) return false;
+        if (dateTo && (item.visitDate || '') > dateTo) return false;
+
+        if (searchTerm) {
+          const haystack = [
+            item.outletName,
+            item.outletCategory,
+            item.visitArea,
+            item.outletAddress,
+            item.picName,
+            item.picRole,
+            item.contactPhone,
+            item.visitOutcome,
+            item.accountTier,
+            item.negotiationStage,
+            item.orderTerms,
+            item.visitNotes,
+            item.nextAction,
+            ...(Array.isArray(item.attachments)
+              ? item.attachments.flatMap((a) => [a.name, a.stage, a.caption])
+              : [])
+          ]
+            .join(' ')
+            .toLowerCase();
+
+          if (!haystack.includes(searchTerm)) return false;
+        }
+
+        return true;
+      });
+
+      filteredLogs.sort((a, b) => {
+        const dtA = `${a.visitDate || ''} ${a.visitTime || ''}`;
+        const dtB = `${b.visitDate || ''} ${b.visitTime || ''}`;
+        return dtB.localeCompare(dtA);
+      });
+
+      updateKPISummary(filteredLogs);
+      renderCanvasingTable(filteredLogs);
+      updateCharts(filteredLogs);
+
+      const countLabel = document.getElementById('resultCountLabel');
+      if (countLabel) {
+        countLabel.textContent = `Menampilkan ${filteredLogs.length} dari ${canvasingLogs.length} data`;
+      }
+    }
+
+    function resetFilters() {
+      onlyBigOrderFilter = false;
+      document.getElementById('searchInput').value = '';
+      document.getElementById('filterArea').value = 'ALL';
+      document.getElementById('filterOutcome').value = 'ALL';
+      document.getElementById('filterDateFrom').value = '';
+      document.getElementById('filterDateTo').value = '';
+      applyFilters();
+    }
+
+    function quickStatusFilter(outcome) {
+      onlyBigOrderFilter = false;
+      document.getElementById('filterOutcome').value = outcome || 'ALL';
+      applyFilters();
+    }
+
+    function quickBigOrderFilter() {
+      onlyBigOrderFilter = !onlyBigOrderFilter;
+      applyFilters();
+      showToast(
+        onlyBigOrderFilter ? 'Menampilkan khusus target & log Big Order.' : 'Filter Big Order dinonaktifkan.',
+        'info'
+      );
+    }
+
+    // Buka / tutup modal Input atau Edit Log Canvasing
+    function openCanvasingModal(recordId = null) {
+      const modal = document.getElementById('canvasingModal');
+      const form = document.getElementById('canvasingForm');
+      const titleEl = document.getElementById('modalTitle');
+      form.reset();
+
+      if (recordId) {
+        const record = canvasingLogs.find((item) => item.id === recordId);
+        if (!record) return;
+        titleEl.textContent = 'Edit Log Kunjungan Canvasing';
+        document.getElementById('editRecordId').value = record.id;
+        document.getElementById('visitDate').value = record.visitDate || '';
+        document.getElementById('visitTime').value = record.visitTime || '';
+        document.getElementById('outletName').value = record.outletName || '';
+        document.getElementById('outletCategory').value = record.outletCategory || 'Kafe / Kedai Minuman';
+        document.getElementById('visitArea').value = record.visitArea || 'Denpasar';
+        document.getElementById('outletAddress').value = record.outletAddress || '';
+        document.getElementById('picName').value = record.picName || '';
+        document.getElementById('picRole').value = record.picRole || '';
+        document.getElementById('contactPhone').value = record.contactPhone || '';
+        document.getElementById('visitOutcome').value = record.visitOutcome || 'Tertarik / Follow Up';
+        document.getElementById('estimatedOrder').value = record.estimatedOrder || '';
+        document.getElementById('isBigOrderTarget').checked = isBigOrderItem(record);
+        document.getElementById('accountTier').value = record.accountTier || 'Big Order / Distributor / Hotel / Group';
+        document.getElementById('negotiationStage').value = record.negotiationStage || 'Prospek & Pemetaan Kebutuhan';
+        document.getElementById('orderTerms').value = record.orderTerms || '';
+        document.getElementById('visitNotes').value = record.visitNotes || '';
+        document.getElementById('nextAction').value = record.nextAction || '';
+        draftAttachments = Array.isArray(record.attachments)
+          ? record.attachments.map((att) => ({ ...att }))
+          : [];
+      } else {
+        titleEl.textContent = 'Input Log Kunjungan Canvasing';
+        document.getElementById('editRecordId').value = '';
+        document.getElementById('visitDate').value = getTodayDateString();
+        const now = new Date();
+        const hh = String(now.getHours()).padStart(2, '0');
+        const mm = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById('visitTime').value = `${hh}:${mm}`;
+        document.getElementById('isBigOrderTarget').checked = false;
+        document.getElementById('accountTier').value = 'Big Order / Distributor / Hotel / Group';
+        document.getElementById('negotiationStage').value = 'Prospek & Pemetaan Kebutuhan';
+        document.getElementById('orderTerms').value = '';
+        draftAttachments = [];
+      }
+
+      renderAttachmentDraftList();
+      modal.classList.remove('hidden');
+    }
+
+    function closeCanvasingModal() {
+      draftAttachments = [];
+      renderAttachmentDraftList();
+      document.getElementById('canvasingModal').classList.add('hidden');
+    }
+
+    // Simpan data log canvasing baru atau hasil edit
+    function handleFormSubmit(event) {
+      event.preventDefault();
+      const editId = document.getElementById('editRecordId').value.trim();
+      const existingRecord = editId ? canvasingLogs.find((item) => item.id === editId) : null;
+
+      const parsedEstimatedOrder = Number(document.getElementById('estimatedOrder').value) || 0;
+      const checkedBigOrder = Boolean(document.getElementById('isBigOrderTarget')?.checked);
+
+      const recordData = {
+        id: editId || `exo-${Date.now()}`,
+        visitDate: document.getElementById('visitDate').value,
+        visitTime: document.getElementById('visitTime').value,
+        outletName: document.getElementById('outletName').value.trim(),
+        outletCategory: document.getElementById('outletCategory').value,
+        visitArea: document.getElementById('visitArea').value,
+        outletAddress: document.getElementById('outletAddress').value.trim(),
+        picName: document.getElementById('picName').value.trim(),
+        picRole: document.getElementById('picRole').value.trim(),
+        contactPhone: document.getElementById('contactPhone').value.trim(),
+        visitOutcome: document.getElementById('visitOutcome').value,
+        estimatedOrder: parsedEstimatedOrder,
+        isBigOrder: checkedBigOrder || parsedEstimatedOrder >= BIG_ORDER_THRESHOLD,
+        accountTier: document.getElementById('accountTier')?.value || 'Regular Outlet',
+        negotiationStage: document.getElementById('negotiationStage')?.value || 'Prospek & Pemetaan Kebutuhan',
+        orderTerms: document.getElementById('orderTerms')?.value.trim() || '',
+        visitNotes: document.getElementById('visitNotes').value.trim(),
+        nextAction: document.getElementById('nextAction').value.trim(),
+        attachments: draftAttachments.map((att) => ({
+          id: att.id,
+          name: att.name,
+          mimeType: att.mimeType,
+          size: att.size,
+          isImage: att.isImage,
+          dataUrl: att.dataUrl,
+          stage: att.stage || 'Saat Kunjungan',
+          caption: (att.caption || '').trim()
+        }))
+      };
+
+      if (!recordData.outletName || !recordData.picName || !recordData.contactPhone) {
+        showToast('Mohon lengkapi nama outlet, nama PIC, dan nomor kontak.', 'warning');
+        return;
+      }
+
+      if (editId) {
+        const index = canvasingLogs.findIndex((item) => item.id === editId);
+        if (index !== -1) {
+          canvasingLogs[index] = recordData;
+          if (!saveLogsToStorage()) {
+            if (existingRecord) canvasingLogs[index] = existingRecord;
+            return;
+          }
+          showToast('Log kunjungan berhasil diperbarui.', 'success');
+        }
+      } else {
+        canvasingLogs.unshift(recordData);
+        if (!saveLogsToStorage()) {
+          canvasingLogs.shift();
+          return;
+        }
+        showToast('Log kunjungan baru berhasil ditambahkan.', 'success');
+      }
+
+      closeCanvasingModal();
+      applyFilters();
+    }
+
+    // Modal Detail Kunjungan
+    function openDetailModal(recordId) {
+      const record = canvasingLogs.find((item) => item.id === recordId);
+      if (!record) return;
+
+      const attachments = Array.isArray(record.attachments) ? record.attachments : [];
+      const attachmentsHtml = attachments.length > 0
+        ? attachments.map((att) => {
+            const mediaPreview = att.isImage && att.dataUrl
+              ? `<img src="${att.dataUrl}" alt="${escapeHTML(att.name)}" class="w-full max-h-56 object-contain rounded-xl bg-slate-100 border border-slate-200" />`
+              : `<div class="p-3 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-between gap-2">
+                   <span class="text-xs font-semibold text-slate-800 truncate">${escapeHTML(att.name)}</span>
+                   ${att.dataUrl ? `<a href="${att.dataUrl}" download="${escapeHTML(att.name)}" class="px-2.5 py-1 rounded-lg bg-teal-600 text-white text-xs font-semibold shrink-0">Unduh File</a>` : ''}
+                 </div>`;
+
+            return `
+              <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <span class="text-xs font-bold text-slate-800 truncate">${escapeHTML(att.name)}</span>
+                  <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-purple-100 text-[#3E0B4B]">${escapeHTML(att.stage || 'Saat Kunjungan')}</span>
+                </div>
+                ${mediaPreview}
+                <p class="text-xs text-slate-700"><strong class="text-slate-900">Keterangan:</strong> ${escapeHTML(att.caption || 'Tidak ada keterangan')}</p>
+              </div>
+            `;
+          }).join('')
+        : `<p class="text-xs text-slate-500 italic">Tidak ada foto atau file terlampir pada kunjungan ini.</p>`;
+
+      document.getElementById('detailModalTitle').textContent = record.outletName;
+      const body = document.getElementById('detailModalBody');
+      body.innerHTML = `
+        <div class="grid grid-cols-2 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200/70">
+          <div>
+            <span class="text-[11px] uppercase font-semibold text-slate-400">Tanggal</span>
+            <p class="font-semibold text-slate-900">${escapeHTML(formatTanggalIndo(record.visitDate))}</p>
+          </div>
+          <div>
+            <span class="text-[11px] uppercase font-semibold text-slate-400">Jam Kunjungan</span>
+            <p class="font-semibold text-teal-700">${escapeHTML(record.visitTime || '-')} WITA</p>
+          </div>
+          <div>
+            <span class="text-[11px] uppercase font-semibold text-slate-400">Wilayah Bali</span>
+            <p class="font-semibold text-slate-900">${escapeHTML(record.visitArea)}</p>
+          </div>
+          <div>
+            <span class="text-[11px] uppercase font-semibold text-slate-400">Kategori</span>
+            <p class="font-semibold text-slate-900">${escapeHTML(record.outletCategory || '-')}</p>
+          </div>
+        </div>
+
+        <div>
+          <span class="text-xs font-semibold text-slate-500">Alamat / Patokan</span>
+          <p class="text-slate-800 mt-0.5">${escapeHTML(record.outletAddress || 'Tidak dicantumkan')}</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <span class="text-xs font-semibold text-slate-500">PIC yang Ditemui</span>
+            <p class="font-semibold text-slate-900 mt-0.5">${escapeHTML(record.picName)} <span class="text-xs font-normal text-slate-500">(${escapeHTML(record.picRole || 'PIC')})</span></p>
+          </div>
+          <div>
+            <span class="text-xs font-semibold text-slate-500">Kontak / WhatsApp</span>
+            <div class="flex flex-wrap items-center gap-2 mt-0.5">
+              <p class="font-mono font-semibold text-slate-900">${escapeHTML(record.contactPhone)}</p>
+              ${
+                normalizeWhatsAppNumber(record.contactPhone)
+                  ? `<button type="button" onclick="openWhatsAppDirect('${escapeHTML(record.contactPhone)}', 'log', '${escapeHTML(record.id)}')" class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition cursor-pointer">Chat via WA</button>`
+                  : ''
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+          <div>
+            <span class="text-xs font-semibold text-slate-500 block mb-1">Hasil Kunjungan</span>
+            <div class="flex flex-wrap items-center gap-1.5">
+              ${getOutcomeBadge(record.visitOutcome)}
+              ${isBigOrderItem(record) ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-[#3E0B4B] text-white">BIG ORDER</span>' : ''}
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-xs font-semibold text-slate-500 block">Estimasi Order</span>
+            <span class="text-base font-extrabold text-slate-900">${formatRupiah(record.estimatedOrder)}</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 bg-purple-50/60 p-3 rounded-xl border border-purple-200/70 text-xs">
+          <div>
+            <span class="text-[11px] font-semibold text-[#3E0B4B] block">Skala Akun</span>
+            <span class="font-semibold text-slate-900">${escapeHTML(record.accountTier || '-')}</span>
+          </div>
+          <div>
+            <span class="text-[11px] font-semibold text-[#3E0B4B] block">Tahap Negosiasi</span>
+            <span class="font-semibold text-slate-900">${escapeHTML(record.negotiationStage || '-')}</span>
+          </div>
+          <div>
+            <span class="text-[11px] font-semibold text-[#3E0B4B] block">MOQ / TOP / Kirim</span>
+            <span class="font-semibold text-slate-900">${escapeHTML(record.orderTerms || '-')}</span>
+          </div>
+        </div>
+
+        <div>
+          <span class="text-xs font-semibold text-slate-500">Catatan Hasil Kunjungan</span>
+          <p class="text-slate-800 bg-slate-50 p-3 rounded-xl border border-slate-200/70 mt-1">${escapeHTML(record.visitNotes || '-')}</p>
+        </div>
+
+        <div>
+          <span class="text-xs font-semibold text-teal-700">Rencana Tindak Lanjut (Next Action)</span>
+          <p class="text-teal-950 bg-teal-50 p-3 rounded-xl border border-teal-200/70 mt-1">${escapeHTML(record.nextAction || '-')}</p>
+        </div>
+
+        <div class="space-y-2 pt-1">
+          <span class="text-xs font-bold text-slate-700 block">Foto / File Lampiran (${attachments.length})</span>
+          <div class="space-y-2.5">${attachmentsHtml}</div>
+        </div>
+      `;
+
+      document.getElementById('detailModal').classList.remove('hidden');
+    }
+
+    function closeDetailModal() {
+      document.getElementById('detailModal').classList.add('hidden');
+    }
+
+    // Modal Konfirmasi Hapus / Reset
+    function openConfirmModal(title, message, actionLabel, onConfirm) {
+      document.getElementById('confirmModalTitle').textContent = title;
+      document.getElementById('confirmModalMessage').textContent = message;
+      const btn = document.getElementById('confirmModalActionBtn');
+      btn.textContent = actionLabel || 'Ya, Lanjutkan';
+      pendingConfirmCallback = onConfirm;
+      btn.onclick = () => {
+        if (typeof pendingConfirmCallback === 'function') {
+          pendingConfirmCallback();
+        }
+        closeConfirmModal();
+      };
+      document.getElementById('confirmModal').classList.remove('hidden');
+    }
+
+    function closeConfirmModal() {
+      pendingConfirmCallback = null;
+      document.getElementById('confirmModal').classList.add('hidden');
+    }
+
+    function requestDeleteRecord(recordId) {
+      const target = canvasingLogs.find((item) => item.id === recordId);
+      const label = target ? `"${target.outletName}"` : 'log ini';
+      openConfirmModal(
+        'Hapus Log Canvasing',
+        `Apakah Anda yakin ingin menghapus data kunjungan ${label}? Tindakan ini tidak dapat dibatalkan.`,
+        'Ya, Hapus',
+        () => {
+          canvasingLogs = canvasingLogs.filter((item) => item.id !== recordId);
+          saveLogsToStorage();
+          applyFilters();
+          showToast('Log kunjungan telah dihapus.', 'info');
+        }
+      );
+    }
+
+    function requestResetDemoData() {
+      openConfirmModal(
+        'Reset Data Contoh CV. EXODRINKS BALI',
+        'Data log canvasing dan rencana kunjungan saat ini akan diganti dengan data contoh awal regional Bali. Lanjutkan?',
+        'Ya, Reset Data',
+        () => {
+          canvasingLogs = [...INITIAL_SAMPLE_DATA];
+          visitPlans = [...INITIAL_SAMPLE_PLANS];
+          saveLogsToStorage();
+          savePlansToStorage();
+          resetFilters();
+          resetPlanFilters();
+          showToast('Data contoh CV. EXODRINKS BALI telah dipulihkan.', 'success');
+        }
+      );
+    }
+
+    // Ekspor data terfilter ke file CSV
+    function exportToCSV() {
+      if (!filteredLogs || filteredLogs.length === 0) {
+        showToast('Tidak ada data untuk diekspor ke CSV.', 'warning');
+        return;
+      }
+
+      const headers = [
+        'Brand / Perusahaan',
+        'Tagline',
+        'Kategori Big Order',
+        'Skala Akun',
+        'Tahap Negosiasi',
+        'MOQ / TOP / Jadwal Kirim',
+        'Tanggal Kunjungan',
+        'Jam Kunjungan (WITA)',
+        'Nama Outlet / Lokasi',
+        'Kategori Tempat',
+        'Wilayah Bali',
+        'Alamat',
+        'Nama PIC',
+        'Jabatan PIC',
+        'Nomor Kontak / WA',
+        'Hasil Kunjungan',
+        'Estimasi Order (IDR)',
+        'Catatan Kunjungan',
+        'Rencana Tindak Lanjut',
+        'Lampiran Foto / File & Keterangan'
+      ];
+
+      const escapeCSV = (val) => {
+        const str = String(val ?? '').replace(/"/g, '""');
+        return `"${str}"`;
+      };
+
+      const rows = filteredLogs.map((item) => {
+        const attachmentSummary = Array.isArray(item.attachments) && item.attachments.length > 0
+          ? item.attachments
+              .map((att) => `[${att.stage || 'Kunjungan'}] ${att.name}${att.caption ? `: ${att.caption}` : ''}`)
+              .join(' | ')
+          : '-';
+
+        return [
+          'CV. EXODRINKS BALI (EXO drinks)',
+          'The authentic Indonesian drinks',
+          isBigOrderItem(item) ? 'Big Order' : 'Regular',
+          item.accountTier || '-',
+          item.negotiationStage || '-',
+          item.orderTerms || '-',
+          item.visitDate,
+          item.visitTime,
+          item.outletName,
+          item.outletCategory,
+          item.visitArea,
+          item.outletAddress,
+          item.picName,
+          item.picRole,
+          item.contactPhone,
+          item.visitOutcome,
+          Number(item.estimatedOrder) || 0,
+          item.visitNotes,
+          item.nextAction,
+          attachmentSummary
+        ].map(escapeCSV).join(',');
+      });
+
+      const csvContent = '\uFEFF' + [headers.map(escapeCSV).join(','), ...rows].join('\r\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `EXODRINKS_BALI_Canvasing_${getTodayDateString()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      showToast(`Berhasil mengekspor ${filteredLogs.length} data ke CSV.`, 'success');
+    }
+
+    // Inisialisasi aplikasi saat halaman siap
+    window.addEventListener('DOMContentLoaded', () => {
+      renderActiveHeaderDate();
+      loadLogsFromStorage();
+      loadPlansFromStorage();
+      applyFilters();
+      applyPlanFilters();
+    });
+  </script>
+</body>
+</html>
